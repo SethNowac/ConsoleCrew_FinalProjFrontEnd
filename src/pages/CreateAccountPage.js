@@ -160,7 +160,7 @@ const CreateAccountPage = () => {
               onChange={handleFirstNameChange}
               style={{ marginTop: '5px' }}
             />
-            {errors.firstName && <span style={{ color: 'red', fontSize: '1px' }}>{errors.firstName}</span>}
+            {errors.firstName && <span style={{ color: 'red', fontSize: '10px' }}>{errors.firstName}</span>}
           </label>
           <label style={{ display: 'flex', flexDirection: 'column' }}>
             Last Name:
@@ -170,7 +170,7 @@ const CreateAccountPage = () => {
               onChange={handleLastNameChange}
               style={{ marginTop: '5px' }}
             />
-            {errors.lastName && <span style={{ color: 'red', fontSize: '1px' }}>{errors.lastName}</span>}
+            {errors.lastName && <span style={{ color: 'red', fontSize: '10px' }}>{errors.lastName}</span>}
           </label>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
@@ -182,7 +182,7 @@ const CreateAccountPage = () => {
               onChange={handleAddressChange}
               style={{ marginTop: '5px' }}
             />
-            {errors.address && <span style={{ color: 'red', fontSize: '1px' }}>{errors.address}</span>}
+            {errors.address && <span style={{ color: 'red', fontSize: '10px' }}>{errors.address}</span>}
           </label>
           <label style={{ display: 'flex', flexDirection: 'column' }}>
             User Name:
@@ -192,7 +192,7 @@ const CreateAccountPage = () => {
               onChange={handleUserNameChange}
               style={{ marginTop: '5px' }}
             />
-            {errors.userName && <span style={{ color: 'red', fontSize: '1px' }}>{errors.userName}</span>}
+            {errors.userName && <span style={{ color: 'red', fontSize: '10px' }}>{errors.userName}</span>}
           </label>
         </div>
         <label style={{ display: 'flex', flexDirection: 'column' }}>
@@ -203,7 +203,7 @@ const CreateAccountPage = () => {
             onChange={handleEmailChange}
             style={{ marginTop: '5px' }}
           />
-          {errors.email && <span style={{ color: 'red', fontSize: '1px' }}>{errors.email}</span>}
+          {errors.email && <span style={{ color: 'red', fontSize: '10px' }}>{errors.email}</span>}
         </label>
         <div style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
           <label style={{ display: 'flex', flexDirection: 'column', marginRight: '10px' }}>
@@ -214,7 +214,7 @@ const CreateAccountPage = () => {
               onChange={handlePasswordChange}
               style={{ marginTop: '5px' }}
             />
-            {errors.password && <span style={{ color: 'red', fontSize: '1px' }}>{errors.password}</span>}
+            {errors.password && <span style={{ color: 'red', fontSize: '10px' }}>{errors.password}</span>}
           </label>
           <label style={{ display: 'flex', flexDirection: 'column' }}>
             Re-enter Password:
@@ -224,7 +224,7 @@ const CreateAccountPage = () => {
               onChange={handleReenteredPasswordChange}
               style={{ marginTop: '5px' }}
             />
-            {errors.reenteredPassword && <span style={{ color: 'red', fontSize: '1px' }}>{errors.reenteredPassword}</span>}
+            {errors.reenteredPassword && <span style={{ color: 'red', fontSize: '10px' }}>{errors.reenteredPassword}</span>}
           </label>
         </div>
         <br />

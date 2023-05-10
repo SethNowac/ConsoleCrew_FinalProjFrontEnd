@@ -8,7 +8,7 @@ import "../style.css"
 function Footer() {
   return (
     <div>
-      <p id="rcorners2">&copy; 2023 Jiahao Yu. All rights reserved.</p>
+      <p id="rcorners2">&copy; 2023 Console Crew. All rights reserved.</p>
     </div>
   );
 }
