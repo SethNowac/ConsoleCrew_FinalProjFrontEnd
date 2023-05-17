@@ -14,6 +14,7 @@ import CreateAccountPage from '../pages/CreateAccountPage';
 import ExistingProjectPage from "../pages/ExistingProjects";
 import ManageProjectPage from "../pages/ManageProjects";
 import { createContext, useEffect, useState } from 'react';
+import ProfilePage from "../pages/Profile";
 
 const LoggedInContext = createContext({
   isLoggedIn: false,
@@ -61,7 +62,8 @@ function App() {
             <Route path="/create-account" element={<CreateAccountPage/>} />
             <Route path='/existing-projects' element={<ExistingProjectPage/>} />
             <Route path='/manage-projects' element={<ManageProjectPage />} />
-          </Route>
+            <Route path="/profile" element={<ProfilePage />} />
+        </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         <Footer />
