@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import NavButton from "./NavButton";
 import "../style.css";
+import { LoggedInContext } from "./App";
+import LogoutButton from "./LogoutButton";
 
 /**
  * Header component that displays navigation links.
  * @component
  * @return {JSX.Element} JSX representation of the component.
  */
-function Header({ isLoggedIn }) {
+function Header() {
+  const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
+
   return (
     <header style={{ display: "flex", justifyContent: "space-between" }}>
       <div>
@@ -21,11 +25,12 @@ function Header({ isLoggedIn }) {
               <NavButton to="/existing-projects" label="Existing Projects" />
               <NavButton to="/manage-projects" label="Manage Projects" />
               <NavButton to="/profile" label="Profile" />
+              <LogoutButton/>
             </>
           )}
           {!isLoggedIn && (
             <>
-              <NavButton to="/login" label="Login" />
+              <NavButton to="/login" label="Log in" />
               <NavButton to="/create-account" label="Sign Up" />
             </>
           )}

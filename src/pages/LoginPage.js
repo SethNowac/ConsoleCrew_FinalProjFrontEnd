@@ -1,12 +1,16 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { LoggedInContext } from "../components/App";
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
+
+  const navigate = useNavigate();
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -18,7 +22,7 @@ const LoginPage = () => {
     setPasswordError("");
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (email.trim() === "") {
@@ -34,9 +38,32 @@ const LoginPage = () => {
     // Perform email and password validation here
     // You can use your MongoDB integration to check if the email exists and the password matches
 
-    // Assuming the validation is successful
-    console.log(`Email: ${email} Password: ${password}`);
-    setIsLoggedIn(true);
+
+
+    const requestOptions = {
+      method: "POST",
+      body: JSON.stringify({
+          username: email,
+          password: password,
+      }),
+      headers:{
+          "Content-type": "application/json; charset=utf-8",
+      },
+    };
+    try{
+        const response = await fetch("http://localhost:1339/session/login", requestOptions);
+        if(response.status === 200) {
+          // Assuming the validation is successful
+          console.log(`Email: ${email} Password: ${password}`);
+          setIsLoggedIn(true);
+          navigate("/existing-projects");
+        } else {
+          setIsLoggedIn(false);
+          navigate("/", { state: { errorMessage: "This user does not exist!" } });
+        }
+    } catch (err){
+      navigate("/", { state: { errorMessage: "An error occured: try again!" } });
+    }
   };
 
   return (
