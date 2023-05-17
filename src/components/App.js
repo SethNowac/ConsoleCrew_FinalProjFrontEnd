@@ -13,6 +13,7 @@ import LoginPage from "../pages/LoginPage";
 import CreateAccountPage from '../pages/CreateAccountPage';
 import ExistingProjectPage from "../pages/ExistingProjects";
 import ManageProjectPage from "../pages/ManageProjects";
+import ProfilePage from "../pages/Profile";
 
 /**
  * Main component of the application that sets up the routing for the different pages.
@@ -34,6 +35,7 @@ function App() {
           <Route path="/create-account" element={<CreateAccountPage/>} />
           <Route path='/existing-projects' element={<ExistingProjectPage/>} />
           <Route path='/manage-projects' element={<ManageProjectPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
         

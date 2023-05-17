@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
 import NavButton from '../components/NavButton';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import { SketchPicker } from 'react-color';
-
+import { ProjectContext, ProjectProvider } from './ProjectContext';
 
 function ManageProjects() {
     const [projectName, setProjectName] = useState('');
@@ -15,19 +15,50 @@ function ManageProjects() {
     const [penColor, setPenColor] = useState('red');
     const [eraserActive, setEraserActive] = useState(false);
     const [showColorPanel, setShowColorPanel] = useState(false);
+    const [tasks, setTasks] = useState([]);
+    const [item, setItems] = useState([]);
+    const [notes, setNotes] = useState('');
+    const [showTextArea, setShowTextArea] = useState(false);
+    const [sketchData, setSketchData] = useState(null);
+    const [storyboardTitle, setStoryboardTitle] = useState('');
+    const [storyboardMode, setStoryboardMode] = useState('type');
     const sketchRef = useRef(null);
+    const { addProject } = useContext(ProjectContext);
 
-    const handleProjectNameChange = (event) => {
-        setProjectName(event.target.value);
-    };
 
+    // Save and restore state when switching between pages
     const handleFormatChange = (selectedFormat) => {
-        setFormat(selectedFormat);
-    };
+        // Save the state of the current page
+        if (format === 'tasks') {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        } else if (format === 'notes') {
+            localStorage.setItem('notes', notes);
+        } else if (format === 'sketchbook') {
+            localStorage.setItem('sketchData', sketchData);
+        } else if (format === 'storyboard') {
+            localStorage.setItem('storyboardTitle', storyboardTitle);
+            localStorage.setItem('storyboardMode', storyboardMode);
+        }
 
-    const handleProjectContentChange = () => {
-        const content = sketchRef.current.toDataURL();
-        setProjectContent(content);
+        // Restore the state of the selected page
+        if (selectedFormat === 'tasks') {
+            const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            setTasks(savedTasks);
+        } else if (selectedFormat === 'notes') {
+            const savedNotes = localStorage.getItem('notes') || '';
+            setNotes(savedNotes);
+        } else if (selectedFormat === 'sketchbook') {
+            const savedSketchData = localStorage.getItem('sketchData') || null;
+            setSketchData(savedSketchData);
+        } else if (selectedFormat === 'storyboard') {
+            const savedStoryboardTitle = localStorage.getItem('storyboardTitle') || '';
+            const savedStoryboardMode = localStorage.getItem('storyboardMode') || 'type';
+            setStoryboardTitle(savedStoryboardTitle);
+            setStoryboardMode(savedStoryboardMode);
+        }
+
+        // Update the selected format
+        setFormat(selectedFormat);
     };
 
     const handleSaveProject = () => {
@@ -36,19 +67,15 @@ function ManageProjects() {
             name: projectName,
             format: projectFormat,
             content: projectContent,
-            // Other project data...
         };
 
         // Logic to save project data to local machine goes here
 
+        addProject(projectData); // Add the project to the context
+
         setSavedProject(projectData);
     };
 
-    const handleStartProject = () => {
-        // Clear the project content when starting a new project
-        setProjectContent('');
-        sketchRef.current.clear();
-    };
 
     const handlePenColorChange = (color) => {
         setPenColor(color.hex);
@@ -63,7 +90,45 @@ function ManageProjects() {
     };
 
     const handleClearSketch = () => {
-        sketchRef.current.clearCanvas();
+        if (sketchRef.current) {
+            sketchRef.current.clearCanvas();
+        }
+    };
+
+    const handleAddTask = () => {
+        setTasks([...tasks, '']);
+    };
+
+    const handleAddItems = () => {
+        setItems([...item, '']);
+    }
+
+    const handleRemoveTask = (index) => {
+        const updatedTasks = [...tasks];
+        updatedTasks.splice(index, 1);
+        setTasks(updatedTasks);
+    };
+
+    const handleTaskChange = (event, index) => {
+        const updatedTasks = [...tasks];
+        updatedTasks[index] = event.target.value;
+        setTasks(updatedTasks);
+    };
+
+    const handleItemChange = (event, index) => {
+        const updatedItems = [...item];
+        updatedItems[index] = event.target.value;
+        setItems(updatedItems);
+    };
+
+    const handleRemoveItem = (index) => {
+        const updatedItems = [...item];
+        updatedItems.splice(index, 1);
+        setItems(updatedItems);
+    };
+
+    const handleToggleTextArea = () => {
+        setShowTextArea((prevShowTextArea) => !prevShowTextArea);
     };
 
     const styles = {
@@ -84,8 +149,25 @@ function ManageProjects() {
             </header>
             <div style={{ display: 'flex', padding: '20px' }}>
                 <div style={{ border: '1px solid #ccc', padding: '20px', width: '30%', marginRight: '20px' }}>
-                    <h2>List of Items to Edit</h2>
-                    {/* Render the list of items to edit */}
+                    <h5>List of Items to Edit</h5>
+                    <div>
+                        {item.map((item, index) => (
+                            <div key={index}>
+                                <textarea
+                                    value={item.text}
+                                    onChange={(event) => handleItemChange(event, index)}
+                                    style={{ height: `35px` }}
+                                    placeholder="Enter Your Items Here"
+                                />
+                                <button onClick={() => handleRemoveItem(index)}>Remove</button>
+                            </div>
+                        ))}
+                    </div>
+                    <div></div>
+                    <div style={{ border: '1px solid black', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <button onClick={handleAddItems} style={{ width: '100%', height: '100%' }}>Add Item</button>
+                    </div>
+
                 </div>
                 <div style={{ width: '70%' }}>
                     <header style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', padding: '20px' }}>
@@ -101,21 +183,44 @@ function ManageProjects() {
                         <div style={{ border: '1px solid #ccc', padding: '20px', width: '100%' }}>
                             {format === 'tasks' && (
                                 <div>
-                                    <h3>Tasks</h3>
-                                    {/* Render tasks */}
+                                    <h3 style={{ textAlign: 'center' }}>Tasks</h3>
+                                    <div>
+                                        {tasks.map((task, index) => (
+                                            <div key={index}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={task.completed}
+                                                // onChange={() => handleTaskCheckboxChange(index)}
+                                                />
+                                                <textarea
+                                                    value={task.text}
+                                                    onChange={(event) => handleTaskChange(event, index)}
+                                                    style={{ height: `35px` }}
+                                                    placeholder="Enter Your Task Here"
+                                                />
+                                                <button onClick={() => handleRemoveTask(index)}>Remove</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button onClick={handleAddTask} >Add Task</button>
                                 </div>
                             )}
                             {format === 'notes' && (
                                 <div>
-                                    <h3>Notes</h3>
-                                    {/* Render notes */}
+                                    <h3 style={{ textAlign: 'center' }}>Notes</h3>
+                                    <textarea
+                                        style={{ width: '100%', height: '300px' }}
+                                        placeholder="Enter Your Notes Here"
+                                    // Handle onChange event and save the typed content
+                                    ></textarea>
                                 </div>
                             )}
                             {format === 'sketchbook' && (
                                 <div>
-                                    <h3>Sketch Book</h3>
+                                    <h3 style={{ textAlign: 'center' }}>Sketch Book</h3>
                                     <div style={{ width: 500 }}>
                                         <ReactSketchCanvas
+                                            ref={sketchRef}
                                             style={styles}
                                             width="1800"
                                             height="1000"
@@ -123,7 +228,17 @@ function ManageProjects() {
                                             strokeColor={eraserActive ? 'white' : penColor}
                                         />
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <div>
+                                            <h4>Eraser</h4>
+                                            <button onClick={toggleEraser}>
+                                                {eraserActive ? 'Disable Eraser' : 'Enable Eraser'}
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <h4>Clear Sketch</h4>
+                                            <button onClick={handleClearSketch}>Clear</button>
+                                        </div>
                                         <div>
                                             <h4>Pen Color</h4>
                                             <button onClick={handlePenColorButtonClick}>Select Color</button>
@@ -131,23 +246,34 @@ function ManageProjects() {
                                                 <SketchPicker color={penColor} onChange={handlePenColorChange} />
                                             )}
                                         </div>
-                                        <div>
-                                            <h4>Eraser</h4>
-                                            <button onClick={toggleEraser}>
-                                                {eraserActive ? 'Disable Eraser' : 'Enable Eraser'}
-                                            </button>
-                                        </div>
-                                        {/* <div>
-                                            <h4>Clear Sketch</h4>
-                                            <button onClick={handleClearSketch}>Clear</button>
-                                        </div> */}
                                     </div>
                                 </div>
                             )}
                             {format === 'storyboard' && (
                                 <div>
-                                    <h3>Storyboard</h3>
-                                    {/* Render storyboard */}
+                                    <h3 style={{ textAlign: 'center' }}>Storyboard</h3>
+                                    <div style={{ border: '1px solid #ccc', padding: '10px' }}>
+                                        <input style={{ textAlign: 'center' }} type="text" placeholder="Storyboard Title" />
+                                        <div>
+                                            <button onClick={() => setShowTextArea(true)}>Type</button>
+                                            <button onClick={() => setShowTextArea(false)}>Draw</button>
+                                        </div>
+                                        {showTextArea ? (
+                                            <textarea
+                                                style={{ width: '100%', height: '600px' }}
+                                                placeholder="Enter Your Story Here"
+                                            // Handle onChange event and save the typed content
+                                            ></textarea>
+                                        ) : (
+                                            <ReactSketchCanvas
+                                                style={{ border: '1px solid #ccc', marginTop: '10px' }}
+                                                width={480}
+                                                height={600}
+                                                strokeWidth={4}
+                                                strokeColor="black"
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -158,8 +284,6 @@ function ManageProjects() {
             {savedProject && (
                 <div>
                     <h3>Project Saved!</h3>
-                    <p>Format: {savedProject.format}</p>
-                    {/* Display other project data */}
                 </div>
             )}
         </>
