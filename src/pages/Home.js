@@ -2,6 +2,7 @@ import Main from '../components/Main';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import '../style.css';
 import Alert from 'react-bootstrap/Alert';
+import NavButton from "../components/NavButton";
 import { SystemError } from './SystemError';
 
 /**
@@ -17,9 +18,14 @@ function Home() {
       {state && state.errorMessage && (
         <Alert variant="danger">{state.errorMessage}</Alert>
       )}
-      <div style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', padding: '20px' }}>
+       <header style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', padding: '20px' }}>
         <h1>Game Organizer</h1>
-      </div>
+        <div>
+          <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
+          <NavButton to="/manage-projects" label="Manage Projects"style={{ marginRight: '10px', color: 'white' }}>Manage Projects</NavButton>
+          <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
+        </div>
+      </header>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px' }}>
         <div style={{ border: '1px solid #ccc', padding: '20px', width: '40%' }}>
           <h2>Possible Projects</h2>

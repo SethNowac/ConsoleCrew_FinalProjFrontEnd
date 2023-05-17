@@ -11,6 +11,8 @@ import { UserError } from "../pages/UserError";
 import { SystemError } from "../pages/SystemError";
 import LoginPage from "../pages/LoginPage";
 import CreateAccountPage from '../pages/CreateAccountPage';
+import ExistingProjectPage from "../pages/ExistingProjects";
+import ManageProjectPage from "../pages/ManageProjects";
 
 /**
  * Main component of the application that sets up the routing for the different pages.
@@ -30,6 +32,8 @@ function App() {
           <Route path="/systemerror" element={<SystemError />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/create-account" element={<CreateAccountPage/>} />
+          <Route path='/existing-projects' element={<ExistingProjectPage/>} />
+          <Route path='/manage-projects' element={<ManageProjectPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
         
