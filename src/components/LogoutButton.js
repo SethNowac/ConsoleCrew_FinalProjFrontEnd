@@ -14,7 +14,7 @@ function LogoutButton() {
                 method: "GET",
                 credentials: "include",
             };
-            const response = await fetch("http://localhost:1339/session/logout", { method : "GET" });
+            const response = await fetch("http://localhost:1339/session/logout", requestOptions);
             if(response.status === 401) {
                 alert("Already logged out on server. Will log out on front-end as well.");
                 setIsLoggedIn(false);

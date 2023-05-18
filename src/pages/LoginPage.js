@@ -46,6 +46,7 @@ const LoginPage = () => {
         username: email,
         password: password,
       }),
+      credentials: "include",
       headers: {
         "Content-type": "application/json; charset=utf-8",
       },

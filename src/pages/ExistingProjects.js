@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
 import NavButton from '../components/NavButton';
 import { ProjectContext } from './ProjectContext';
+import { AllProjects } from '../components/AllProjects';
 
 function ExistingProjects() {
   const { project } = useContext(ProjectContext);
@@ -33,13 +34,9 @@ function ExistingProjects() {
         </div>
       </header>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px' }}>
-        <div style={{ border: '1px solid #ccc', padding: '20px', width: '40%' }}>
+        <div style={{ border: '1px solid #ccc', padding: '20px', width: '40%', textAlign: 'center' }}>
           <h2>Recent Edited Projects</h2>
-          <ul style={{ border: '1px solid #ccc', padding: '10px' }}>
-            {recentEditedProjects.map((project) => (
-              <li key={project.id}>{project.name}</li>
-            ))}
-          </ul>
+          <AllProjects/>
         </div>
         <div style={{ border: '1px solid #ccc', padding: '20px', width: '50%' }}>
           <h2>Recent Tasks</h2>
