@@ -144,7 +144,6 @@ function ManageProjects() {
                 <h1>Game Organizer</h1>
                 <div>
                     <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
-                    <NavButton to="/manage-projects" label="Manage Projects" style={{ marginRight: '10px', color: 'white' }}>Manage Projects</NavButton>
                     <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
                 </div>
             </header>
