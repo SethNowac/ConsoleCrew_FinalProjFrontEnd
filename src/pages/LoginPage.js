@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoggedInContext } from "../components/App";
-
+import "../style.css";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -42,30 +42,29 @@ const LoginPage = () => {
 
     const requestOptions = {
       method: "POST",
-      credentials: "include",
       body: JSON.stringify({
-          username: email,
-          password: password,
+        username: email,
+        password: password,
       }),
-      headers:{
-          "Content-type": "application/json; charset=utf-8",
+      headers: {
+        "Content-type": "application/json; charset=utf-8",
       },
     };
-    try{
-        const response = await fetch("http://localhost:1339/session/login", requestOptions);
-        if(response.status === 200) {
-          // Assuming the validation is successful
-          console.log(`Email: ${email} Password: ${password}`);
-          setIsLoggedIn(true);
+    try {
+      const response = await fetch("http://localhost:1339/session/login", requestOptions);
+      if (response.status === 200) {
+        // Assuming the validation is successful
+        console.log(`Email: ${email} Password: ${password}`);
+        setIsLoggedIn(true);
           const result = await response.json();
           console.log(result.id);
           localStorage.setItem("userId", result.id);
-          navigate("/existing-projects");
-        } else {
-          setIsLoggedIn(false);
-          navigate("/", { state: { errorMessage: "This user does not exist!" } });
-        }
-    } catch (err){
+        navigate("/existing-projects");
+      } else {
+        setIsLoggedIn(false);
+        navigate("/", { state: { errorMessage: "This user does not exist!" } });
+      }
+    } catch (err) {
       navigate("/", { state: { errorMessage: "An error occured: try again!" } });
     }
   };
@@ -107,9 +106,12 @@ const LoginPage = () => {
           </label>
           <br />
           <div style={{ display: "flex", justifyContent: "center", marginLeft: "-10px" }}>
-            <button type="submit">Login</button>
+            <button type="submit" class="button-arounder">Login</button>
             <span style={{ margin: "0px 10px" }}> or </span>
             <Link to="/create-account" style={{ marginLeft: "10px" }}>Create Account</Link>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
+            <Link to="/profile" style={{ marginLeft: "10px" }}>Forgot your password?</Link>
           </div>
         </form>
       </div>

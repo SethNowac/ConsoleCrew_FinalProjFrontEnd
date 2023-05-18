@@ -39,3 +39,252 @@
   margin: 0px 0px 0px 4px;
   text-shadow: rgb(112, 112, 112) 1px 1px;
 }
+
+body {
+  background: hsl(220deg, 10%, 97%);
+  margin: 0;
+  padding: 0;
+}
+
+.buttons-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-arounder {
+  font-size: 1rem;
+  background: hsl(190deg, 30%, 15%);
+  color: hsl(190deg, 10%, 95%);
+  
+  box-shadow: 0 0px 0px hsla(190deg, 15%, 5%, .2);
+  transfrom: translateY(0);
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  
+  --dur: .15s;
+  --delay: .15s;
+  --radius: 16px;
+  
+  transition:
+    border-top-left-radius var(--dur) var(--delay) ease-out,
+    border-top-right-radius var(--dur) calc(var(--delay) * 2) ease-out,
+    border-bottom-right-radius var(--dur) calc(var(--delay) * 3) ease-out,
+    border-bottom-left-radius var(--dur) calc(var(--delay) * 4) ease-out,
+    box-shadow calc(var(--dur) * 4) ease-out,
+    transform calc(var(--dur) * 4) ease-out,
+    background calc(var(--dur) * 4) steps(4, jump-end);
+}
+
+.button-arounder:hover,
+.button-arounder:focus {
+  box-shadow: 0 4px 8px hsla(190deg, 15%, 5%, .2);
+  transform: translateY(-4px);
+  background: hsl(230deg, 50%, 45%);
+  border-top-left-radius: var(--radius);
+  border-top-right-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+
+/**/
+:root{
+  /* color type A */
+  --line_color : #555555 ;
+  --back_color : #FFECF6  ;
+
+  /* color type B */
+  /* --line_color : #1b1919 ;
+  --back_color : #E9ECFF  ; */
+
+  /* color type C */
+  /* --line_color : #00135C ;
+  --back_color : #DEFFFA  ; */
+}
+
+.button{
+  position : relative ;
+  z-index : 0 ;
+  width : 40px ;
+  height : 10px ;
+  text-decoration : none ;
+  font-size : 14px ; 
+  font-weight : bold ;
+  color : var(--line_color) ;
+  letter-spacing : 2px ;
+  transition : all .3s ease ;
+}
+.button__text{
+  display : flex ;
+  justify-content : center ;
+  align-items : center ;
+  width : 100% ;
+  height : 100% ;
+}
+.button::before,
+.button::after,
+.button__text::before,
+.button__text::after{
+  content : '' ;
+  position : absolute ;
+  height : 3px ;
+  border-radius : 2px ;
+  background : var(--line_color) ;
+  transition : all .5s ease ;
+}
+.button::before{
+  top : 0 ;
+  left : 54px ;
+  width : calc( 100% - 56px * 2 - 16px ) ;
+}
+.button::after{
+  top : 0 ;
+  right : 54px ;
+  width : 8px ;
+}
+.button__text::before{
+  bottom : 0 ;
+  right : 54px ;
+  width : calc( 100% - 56px * 2 - 16px ) ;
+}
+.button__text::after{
+  bottom : 0 ;
+  left : 54px ;
+  width : 8px ;
+}
+.button__line{
+  position : absolute ;
+  top : 0 ;
+  width : 56px ;
+  height : 100% ;
+  overflow : hidden ;
+}
+.button__line::before{
+  content : '' ;
+  position : absolute ;
+  top : 0 ;
+  width : 150% ;
+  height : 100% ;
+  box-sizing : border-box ;
+  border-radius : 300px ;
+  border : solid 3px var(--line_color) ;
+}
+.button__line:nth-child(1),
+.button__line:nth-child(1)::before{
+  left : 0 ;
+}
+.button__line:nth-child(2),
+.button__line:nth-child(2)::before{
+  right : 0 ;
+}
+.button:hover{
+  letter-spacing : 6px ;
+}
+.button:hover::before,
+.button:hover .button__text::before{
+  width : 8px ;
+}
+.button:hover::after,
+.button:hover .button__text::after{
+  width : calc( 100% - 56px * 2 - 16px ) ;
+}
+
+.container{
+  width : 100% ;
+  height : 300px ;
+  display : flex ;
+  flex-direction : column ;
+  justify-content : center ;
+  align-items : center ;
+  margin-bottom: 20px;
+}
+
+/**/
+.styled-button{
+  --b: 3px;   /* border thickness */
+  --s: .15em; /* size of the corner */
+  --c: #849bcc;
+  
+  padding: calc(.05em + var(--s)) calc(.3em + var(--s));
+  color: var(--c);
+  --_p: var(--s);
+  background:
+    conic-gradient(from 90deg at var(--b) var(--b),#0000 90deg,var(--c) 0)
+    var(--_p) var(--_p)/calc(100% - var(--b) - 2*var(--_p)) calc(100% - var(--b) - 2*var(--_p));
+  transition: .3s linear, color 0s, background-color 0s;
+  outline: var(--b) solid #0000;
+  outline-offset: .2em;
+}
+button:hover,
+button:focus-visible{
+  --_p: 0px;
+  outline-color: var(--c);
+  outline-offset: .05em;
+}
+button:active {
+  background: var(--c);
+  color: #fff;
+
+}
+
+button.general-button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  line-height: 1;
+  padding: 1em 1.5em;
+  position: relative;
+  transition: filter var(--motion-duration);
+}
+
+button.general-button:hover {
+  filter: brightness(1.1);
+}
+
+button.general-button:active {
+  filter: brightness(0.9);
+}
+
+button.general-button > span {
+  display: block;
+  position: relative;
+  transition: transform var(--motion-duration) var(--motion-ease);
+  z-index: 1;
+}
+
+button.general-button:hover > span {
+  transform: scale(1.05);
+}
+
+button.general-button:active > span {
+  transform: scale(0.95);
+}
+
+button.general-button > svg {
+  fill: #950cde;
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  width: 110%;
+  height: 110%;
+}
+
+button.general-button > svg > path {
+  transition: var(--motion-duration) var(--motion-ease);
+}
+
+button.general-button:hover > svg > path {
+  d: path("M0,0 C0,-5 100,-5 100,0 C105,0 105,100 100,100 C100,105 0,105 0,100 C-5,100 -5,0 0,0");
+}
+
+button.general-button:active > svg > path {
+  d: path("M0,0 C30,10 70,10 100,0 C95,30 95,70 100,100 C70,90 30,90 0,100 C5,70 5,30 0,0");
+}
