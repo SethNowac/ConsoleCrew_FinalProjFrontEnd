@@ -12,7 +12,6 @@ function AddPlayerForm(props) {
     const nameRef = useRef(null);
     const idRef = useRef(null);
     const imageRef = useRef(null);
-    
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {

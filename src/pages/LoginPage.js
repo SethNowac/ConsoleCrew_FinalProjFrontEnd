@@ -42,6 +42,7 @@ const LoginPage = () => {
 
     const requestOptions = {
       method: "POST",
+      credentials: "include",
       body: JSON.stringify({
           username: email,
           password: password,

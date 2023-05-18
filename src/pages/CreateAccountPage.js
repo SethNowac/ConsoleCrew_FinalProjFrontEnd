@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { LoggedInContext } from '../components/App';
 // import userService from "../userService";
 
 const CreateAccountPage = () => {
@@ -88,7 +89,10 @@ const CreateAccountPage = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (validateForm()) {
@@ -99,30 +103,28 @@ const CreateAccountPage = () => {
       console.log(`Password: ${password}`);
       console.log(`Email: ${email}`);
 
-      const user = {
-        firstName,
-        lastName,
-        address,
-        userName,
-        password,
-        email,
+      
+      const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({
+            username: email,
+            password: password,
+        }),
+        headers:{
+            "Content-type": "application/json; charset=utf-8",
+        },
       };
-
-      try {
-        // await userService.createUser(user);
-
-        // Reset form fields
-        setFirstName('');
-        setLastName('');
-        setAddress('');
-        setUserName('');
-        setPassword('');
-        setReenteredPassword('');
-        setEmail('');
-        setErrors({});
-        setSuccess(true);
-      } catch(error){
-        console.log('Error storing user data: ', error);
+      try{
+          const response = await fetch("http://localhost:1339/users/register", requestOptions);
+          if(response.status === 200) {
+            // Assuming the validation is successful
+            console.log(`Email: ${email} Password: ${password}`);
+            navigate("/login");
+          } else {
+            navigate("/", { state: { errorMessage: "One or more fields were not valid!" } });
+          }
+      } catch (err){
+        navigate("/", { state: { errorMessage: "An error occured: try again!" } });
       }
     }
   };
