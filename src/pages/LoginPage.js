@@ -57,6 +57,9 @@ const LoginPage = () => {
           // Assuming the validation is successful
           console.log(`Email: ${email} Password: ${password}`);
           setIsLoggedIn(true);
+          const result = await response.json();
+          console.log(result.id);
+          localStorage.setItem("userId", result.id);
           navigate("/existing-projects");
         } else {
           setIsLoggedIn(false);
