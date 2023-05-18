@@ -195,7 +195,7 @@ function ManageProjects() {
                                                 <textarea
                                                     value={task.text}
                                                     onChange={(event) => handleTaskChange(event, index)}
-                                                    style={{ height: `35px` }}
+                                                    style={{ height: '5vh', width: '50vw' }}
                                                     placeholder="Enter Your Task Here"
                                                 />
                                                 <button onClick={() => handleRemoveTask(index)}>Remove</button>
@@ -218,7 +218,7 @@ function ManageProjects() {
                             {format === 'sketchbook' && (
                                 <div>
                                     <h3 style={{ textAlign: 'center' }}>Sketch Book</h3>
-                                    <div style={{ width: 500 }}>
+                                    <div style={{ width: '100%' }}>
                                         <ReactSketchCanvas
                                             ref={sketchRef}
                                             style={styles}
@@ -266,8 +266,7 @@ function ManageProjects() {
                                             ></textarea>
                                         ) : (
                                             <ReactSketchCanvas
-                                                style={{ border: '1px solid #ccc', marginTop: '10px' }}
-                                                width={480}
+                                                style={{ width: '100%', border: '1px solid #ccc', marginTop: '10px' }}
                                                 height={600}
                                                 strokeWidth={4}
                                                 strokeColor="black"
