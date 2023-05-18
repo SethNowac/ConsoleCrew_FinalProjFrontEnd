@@ -5,6 +5,7 @@ import NavButton from '../components/NavButton';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import { SketchPicker } from 'react-color';
 import { ProjectContext, ProjectProvider } from './ProjectContext';
+import "../style.css";
 
 function ManageProjects() {
     const [projectName, setProjectName] = useState('');
@@ -163,20 +164,18 @@ function ManageProjects() {
                             </div>
                         ))}
                     </div>
-                    <div></div>
-                    <div style={{ border: '1px solid black', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <button onClick={handleAddItems} style={{ width: '100%', height: '100%' }}>Add Item</button>
+                    <div>
+                        <button onClick={handleAddItems} style={{ width: '100%', height: '100%' }} className="styled-button">Add Item</button>
                     </div>
-
                 </div>
                 <div style={{ width: '70%' }}>
-                    <header style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', padding: '20px' }}>
+                    <header style={{ backgroundColor: "black", color: 'white', textAlign: 'center', padding: '20px' }}>
                         <h2>Format</h2>
                         <div>
-                            <button onClick={() => handleFormatChange('tasks')} style={{ marginRight: '10px', color: 'black' }}>Tasks</button>
-                            <button onClick={() => handleFormatChange('notes')} style={{ marginRight: '10px', color: 'black' }}>Notes</button>
-                            <button onClick={() => handleFormatChange('sketchbook')} style={{ marginRight: '10px', color: 'black' }}>Sketch Book</button>
-                            <button onClick={() => handleFormatChange('storyboard')} style={{ marginRight: '10px', color: 'black' }}>Storyboard</button>
+                            <button onClick={() => handleFormatChange('tasks')} className="styled-button">Tasks</button>
+                            <button onClick={() => handleFormatChange('notes')} className="styled-button">Notes</button>
+                            <button onClick={() => handleFormatChange('sketchbook')} className="styled-button">Sketch Book</button>
+                            <button onClick={() => handleFormatChange('storyboard')} className="styled-button">Storyboard</button>
                         </div>
                     </header>
                     <div style={{ display: 'flex' }}>
@@ -202,7 +201,8 @@ function ManageProjects() {
                                             </div>
                                         ))}
                                     </div>
-                                    <button onClick={handleAddTask} >Add Task</button>
+                                    <button onClick={handleAddTask}>Add Task</button>
+
                                 </div>
                             )}
                             {format === 'notes' && (
@@ -231,7 +231,7 @@ function ManageProjects() {
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <div>
                                             <h4>Eraser</h4>
-                                            <button onClick={toggleEraser}>
+                                            <button onClick={toggleEraser} style={{ backgroundColor: eraserActive ? 'red' : 'green' }}>
                                                 {eraserActive ? 'Disable Eraser' : 'Enable Eraser'}
                                             </button>
                                         </div>
@@ -279,7 +279,14 @@ function ManageProjects() {
                     </div>
                 </div>
             </div>
-            <button type="button" onClick={handleSaveProject}>Save Project</button>
+            <a href="#" class="button">
+                <div class="button__line"></div>
+                <div class="button__line"></div>
+                <span type="button" onClick={handleSaveProject} class="button__text">Save Project</span>
+            </a>
+            <div><h1>
+
+            </h1></div>
             {savedProject && (
                 <div>
                     <h3>Project Saved!</h3>

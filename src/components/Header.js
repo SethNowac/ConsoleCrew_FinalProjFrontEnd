@@ -5,11 +5,6 @@ import "../style.css";
 import { LoggedInContext } from "./App";
 import LogoutButton from "./LogoutButton";
 
-/**
- * Header component that displays navigation links.
- * @component
- * @return {JSX.Element} JSX representation of the component.
- */
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
 
@@ -28,13 +23,16 @@ function Header() {
               <LogoutButton/>
             </>
           )}
-          {!isLoggedIn && (
-            <>
-              <NavButton to="/login" label="Log in" />
-              <NavButton to="/create-account" label="Sign Up" />
-            </>
-          )}
+          
         </div>
+      </div>
+      <div style={{ display: "flex" }}>
+        {!isLoggedIn && (
+          <>
+            <NavButton to="/login" label="Log in" />
+            <NavButton to="/create-account" label="Sign Up" />
+          </>
+        )}
       </div>
     </header>
   );

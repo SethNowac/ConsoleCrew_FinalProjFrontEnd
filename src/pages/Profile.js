@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import "../style.css";
 
 function ProfilePage() {
   const [email, setEmail] = useState('');
@@ -104,7 +105,7 @@ function ProfilePage() {
           </label>
           <br />
           <div style={{ display: 'flex', justifyContent: 'center', marginLeft: '-10px' }}>
-            <button type="submit">Confirm Changing</button>
+            <button type="submit" class="button-arounder">Confirm Changing</button>
           </div>
         </form>
       </div>

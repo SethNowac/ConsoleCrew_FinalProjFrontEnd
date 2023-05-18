@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { LoggedInContext } from '../components/App';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import "../style.css";
 // import userService from "../userService";
 
 const CreateAccountPage = () => {
@@ -89,10 +89,7 @@ const CreateAccountPage = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
-  const navigate = useNavigate();
-
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     if (validateForm()) {
@@ -103,28 +100,30 @@ const CreateAccountPage = () => {
       console.log(`Password: ${password}`);
       console.log(`Email: ${email}`);
 
-      
-      const requestOptions = {
-        method: "POST",
-        body: JSON.stringify({
-            username: email,
-            password: password,
-        }),
-        headers:{
-            "Content-type": "application/json; charset=utf-8",
-        },
+      const user = {
+        firstName,
+        lastName,
+        address,
+        userName,
+        password,
+        email,
       };
-      try{
-          const response = await fetch("http://localhost:1339/users/register", requestOptions);
-          if(response.status === 200) {
-            // Assuming the validation is successful
-            console.log(`Email: ${email} Password: ${password}`);
-            navigate("/login");
-          } else {
-            navigate("/", { state: { errorMessage: "One or more fields were not valid!" } });
-          }
-      } catch (err){
-        navigate("/", { state: { errorMessage: "An error occured: try again!" } });
+
+      try {
+        // await userService.createUser(user);
+
+        // Reset form fields
+        setFirstName('');
+        setLastName('');
+        setAddress('');
+        setUserName('');
+        setPassword('');
+        setReenteredPassword('');
+        setEmail('');
+        setErrors({});
+        setSuccess(true);
+      } catch(error){
+        console.log('Error storing user data: ', error);
       }
     }
   };
@@ -233,7 +232,7 @@ const CreateAccountPage = () => {
         <div
           style={{ display: 'flex', justifyContent: 'center', marginLeft: '-10px' }}
         >
-          <button type="submit">Create Account</button>
+          <button type="submit" class="button-arounder">Create Account</button>
           <span style={{ margin: '0px 10px' }}> or </span>
           <Link to="/login" style={{ marginLeft: '10px' }}>
             Login
