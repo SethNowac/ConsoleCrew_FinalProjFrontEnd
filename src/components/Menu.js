@@ -1,7 +1,7 @@
 import { Button } from 'react-bootstrap';
 import { AddPlayer } from './AddPlayer';
 import { SinglePlayer } from './SinglePlayer';
-import { AllProjects } from './AllProjects';
+import { AllPlayers } from './AllPlayers';
 import { UpdatePlayer } from './UpdatePlayer';
 import { DeletePlayer } from './DeletePlayer';
 
@@ -14,7 +14,7 @@ import { DeletePlayer } from './DeletePlayer';
 function Menu({ setDisplay }) {
   const menuItem1 = <AddPlayer setDisplay={setDisplay} />;
   const menuItem2 = <SinglePlayer setDisplay={setDisplay} />;
-  const menuItem3 = <AllProjects setDisplay={setDisplay} />;
+  const menuItem3 = <AllPlayers setDisplay={setDisplay} />;
   const menuItem4 = <UpdatePlayer setDisplay={setDisplay} />;
   const menuItem5 = <DeletePlayer setDisplay={setDisplay} />;
 

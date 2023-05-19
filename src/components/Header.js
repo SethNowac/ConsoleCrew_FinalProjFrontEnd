@@ -18,6 +18,7 @@ function Header() {
           {isLoggedIn && (
             <>
               <NavButton to="/existing-projects" label="Existing Projects" />
+              <NavButton to="/manage-projects" label="Manage Projects" />
               <NavButton to="/profile" label="Profile" />
               <LogoutButton/>
             </>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
 import NavButton from '../components/NavButton';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
@@ -12,6 +12,9 @@ function ManageProjects() {
     const [projectFormat, setProjectFormat] = useState('');
     const [projectContent, setProjectContent] = useState('');
     const [savedProject, setSavedProject] = useState(null);
+    const [savedSketch, setSavedSketch] = useState(null);
+    const [recentSketches, setRecentSketches] = useState([]);
+    const [sketchTitle, setSketchTitle] = useState('');
     const [format, setFormat] = useState('');
     const [penColor, setPenColor] = useState('red');
     const [eraserActive, setEraserActive] = useState(false);
@@ -22,9 +25,13 @@ function ManageProjects() {
     const [showTextArea, setShowTextArea] = useState(false);
     const [sketchData, setSketchData] = useState(null);
     const [storyboardTitle, setStoryboardTitle] = useState('');
+    const [recentNotes, setRecentNotes] = useState('');
     const [storyboardMode, setStoryboardMode] = useState('type');
     const sketchRef = useRef(null);
+    const storyBoardRef = useRef(null);
     const { addProject } = useContext(ProjectContext);
+    const navigate = useNavigate();
+
 
 
     // Save and restore state when switching between pages
@@ -62,21 +69,25 @@ function ManageProjects() {
         setFormat(selectedFormat);
     };
 
-    const handleSaveProject = () => {
-        // Save the project to the user's local machine
-        const projectData = {
-            name: projectName,
-            format: projectFormat,
-            content: projectContent,
-        };
-
-        // Logic to save project data to local machine goes here
-
-        addProject(projectData); // Add the project to the context
-
-        setSavedProject(projectData);
+    const handleSaveTask = () => {
+        localStorage.setItem('projectTasks', JSON.stringify(tasks));
     };
 
+    const handleSaveNotes = () => {
+        const notesData = { notes: notes };
+        localStorage.setItem('projectNotes', JSON.stringify(notesData));
+    }
+
+    const handleSaveSketch = () => {
+        // Save the sketch title to local storage along with other sketch data
+        const sketchData = { title: sketchTitle };
+        localStorage.setItem('projectSketch', JSON.stringify(sketchData));
+    }
+
+    const handleSaveStoryBoard = () => {
+        const storyBoardData = { title: storyboardTitle };
+        localStorage.setItem('projectStoryBoard', JSON.stringify(storyBoardData));
+    }
 
     const handlePenColorChange = (color) => {
         setPenColor(color.hex);
@@ -96,13 +107,21 @@ function ManageProjects() {
         }
     };
 
-    const handleAddTask = () => {
-        setTasks([...tasks, '']);
+    const handleClearStoryBoard = () => {
+        if (storyBoardRef.current) {
+            storyBoardRef.current.clearCanvas();
+        }
     };
 
-    const handleAddItems = () => {
-        setItems([...item, '']);
-    }
+    const handleAddTask = () => {
+        setTasks([...tasks, { text: '', completed: false }]);
+    };
+
+    const handleTaskChange = (event, index) => {
+        const updatedTasks = [...tasks];
+        updatedTasks[index].text = event.target.value;
+        setTasks(updatedTasks);
+    };
 
     const handleRemoveTask = (index) => {
         const updatedTasks = [...tasks];
@@ -110,11 +129,12 @@ function ManageProjects() {
         setTasks(updatedTasks);
     };
 
-    const handleTaskChange = (event, index) => {
-        const updatedTasks = [...tasks];
-        updatedTasks[index] = event.target.value;
-        setTasks(updatedTasks);
-    };
+
+    const handleAddItems = () => {
+        setItems([...item, '']);
+    }
+
+
 
     const handleItemChange = (event, index) => {
         const updatedItems = [...item];
@@ -144,19 +164,20 @@ function ManageProjects() {
                 <h1>Game Organizer</h1>
                 <div>
                     <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
+                    <NavButton to="/manage-projects" label="Manage Projects" style={{ marginRight: '10px', color: 'white' }}>Manage Projects</NavButton>
                     <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
                 </div>
             </header>
             <div style={{ display: 'flex', padding: '20px' }}>
-                <div style={{ border: '1px solid #ccc', padding: '20px', width: '30%', marginRight: '20px' }}>
+                <div style={{ border: '1px solid #ccc', padding: '20px', width: '30%', marginRight: '20px', display: 'flex', flexDirection: 'column', flex: '1' }}>
                     <h5>List of Items to Edit</h5>
-                    <div>
+                    <div style={{ flex: '1', overflowY: 'auto' }}>
                         {item.map((item, index) => (
                             <div key={index}>
                                 <textarea
                                     value={item.text}
                                     onChange={(event) => handleItemChange(event, index)}
-                                    style={{ height: `35px` }}
+                                    style={{ height: `35px`, width: '100%' }}
                                     placeholder="Enter Your Items Here"
                                 />
                                 <button onClick={() => handleRemoveItem(index)}>Remove</button>
@@ -182,77 +203,108 @@ function ManageProjects() {
                             {format === 'tasks' && (
                                 <div>
                                     <h3 style={{ textAlign: 'center' }}>Tasks</h3>
-                                    <div>
-                                        {tasks.map((task, index) => (
-                                            <div key={index}>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={task.completed}
-                                                // onChange={() => handleTaskCheckboxChange(index)}
-                                                />
-                                                <textarea
-                                                    value={task.text}
-                                                    onChange={(event) => handleTaskChange(event, index)}
-                                                    style={{ height: '5vh', width: '50vw' }}
-                                                    placeholder="Enter Your Task Here"
-                                                />
-                                                <button onClick={() => handleRemoveTask(index)}>Remove</button>
+                                    <div style={{ border: '1px solid #ccc', padding: '10px' }}>
+                                        <div>
+                                            {tasks.map((task, index) => (
+                                                <div key={index}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={task.completed}
+                                                    // onChange={() => handleTaskCheckboxChange(index)}
+                                                    />
+                                                    <textarea
+                                                        value={task.text}
+                                                        onChange={(event) => handleTaskChange(event, index)}
+                                                        style={{ height: '5vh', width: '50vw' }}
+                                                        placeholder="Enter Your Task Here"
+                                                    />
+                                                    <button onClick={() => handleRemoveTask(index)}>Remove</button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <button onClick={handleAddTask}>Add Task</button>
                                             </div>
-                                        ))}
-                                    </div>
-                                    <button onClick={handleAddTask}>Add Task</button>
+                                        </div>
 
+
+
+                                    </div>
+                                    <div>
+                                        <button onClick={handleSaveTask} className="button-49">Save Project</button>
+                                    </div>
                                 </div>
                             )}
                             {format === 'notes' && (
                                 <div>
                                     <h3 style={{ textAlign: 'center' }}>Notes</h3>
-                                    <textarea
-                                        style={{ width: '100%', height: '300px' }}
-                                        placeholder="Enter Your Notes Here"
-                                    // Handle onChange event and save the typed content
-                                    ></textarea>
+                                    <div style={{ border: '1px solid #ccc', padding: '10px' }}>
+                                        <textarea
+                                            style={{ width: '100%', height: '300px' }}
+                                            placeholder="Enter Your Notes Here"
+                                            value={notes}
+                                            onChange={(e) => setNotes(e.target.value)}
+                                        ></textarea>
+                                    </div>
+
+                                    <button onClick={handleSaveNotes} className="button-49">Save Project</button>
                                 </div>
                             )}
                             {format === 'sketchbook' && (
                                 <div>
                                     <h3 style={{ textAlign: 'center' }}>Sketch Book</h3>
-                                    <div style={{ width: '100%' }}>
-                                        <ReactSketchCanvas
-                                            ref={sketchRef}
-                                            style={styles}
-                                            width="1800"
-                                            height="1000"
-                                            strokeWidth={eraserActive ? 20 : 4}
-                                            strokeColor={eraserActive ? 'white' : penColor}
-                                        />
+                                    <div style={{ border: '1px solid #ccc', padding: '10px' }}>
+                                        <div>
+                                            <input
+                                                type="text"
+                                                id="sketchTitle"
+                                                value={sketchTitle}
+                                                style={{ textAlign: 'center' }}
+                                                onChange={(e) => setSketchTitle(e.target.value)}
+                                                placeholder='Sketch Book Title'
+                                            />
+                                        </div>
+                                        <div style={{ width: '100%' }}>
+                                            <ReactSketchCanvas
+                                                ref={sketchRef}
+                                                style={styles}
+                                                width="1800"
+                                                height="1000"
+                                                strokeWidth={eraserActive ? 20 : 4}
+                                                strokeColor={eraserActive ? 'white' : penColor}
+                                            />
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <div>
+                                                <h4>Eraser</h4>
+                                                <button onClick={toggleEraser} style={{ backgroundColor: eraserActive ? 'red' : 'green' }}>
+                                                    {eraserActive ? 'Disable Eraser' : 'Enable Eraser'}
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <h4>Clear Sketch</h4>
+                                                <button onClick={handleClearSketch}>Clear</button>
+                                            </div>
+                                            <div>
+                                                <h4>Pen Color</h4>
+                                                <button onClick={handlePenColorButtonClick}>Select Color</button>
+                                                {showColorPanel && <SketchPicker color={penColor} onChange={handlePenColorChange} />}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <div>
-                                            <h4>Eraser</h4>
-                                            <button onClick={toggleEraser} style={{ backgroundColor: eraserActive ? 'red' : 'green' }}>
-                                                {eraserActive ? 'Disable Eraser' : 'Enable Eraser'}
-                                            </button>
-                                        </div>
-                                        <div>
-                                            <h4>Clear Sketch</h4>
-                                            <button onClick={handleClearSketch}>Clear</button>
-                                        </div>
-                                        <div>
-                                            <h4>Pen Color</h4>
-                                            <button onClick={handlePenColorButtonClick}>Select Color</button>
-                                            {showColorPanel && (
-                                                <SketchPicker color={penColor} onChange={handlePenColorChange} />
-                                            )}
-                                        </div>
+
+                                    <div>
+                                        <button onClick={handleSaveSketch} className="button-49">Save Project</button>
                                     </div>
+
                                 </div>
                             )}
                             {format === 'storyboard' && (
                                 <div>
                                     <h3 style={{ textAlign: 'center' }}>Storyboard</h3>
                                     <div style={{ border: '1px solid #ccc', padding: '10px' }}>
-                                        <input style={{ textAlign: 'center' }} type="text" placeholder="Storyboard Title" />
+                                        <input style={{ textAlign: 'center' }} type="text" placeholder="Storyboard Title" value={storyboardTitle} onChange={(e) => setStoryboardTitle(e.target.value)} />
                                         <div>
                                             <button onClick={() => setShowTextArea(true)}>Type</button>
                                             <button onClick={() => setShowTextArea(false)}>Draw</button>
@@ -272,18 +324,16 @@ function ManageProjects() {
                                             />
                                         )}
                                     </div>
+
+                                    <button onClick={handleSaveStoryBoard} className="button-49">Save Project</button>
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
             </div>
-            <a href="#" class="button">
-                <div class="button__line"></div>
-                <div class="button__line"></div>
-                <span type="button" onClick={handleSaveProject} class="button__text">Save Project</span>
-            </a>
             <div><h1>
+
 
             </h1></div>
             {savedProject && (
