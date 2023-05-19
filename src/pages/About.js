@@ -10,8 +10,8 @@ function About() {
 
     return (
       <div>
-        <h1>About Us</h1>
-        <h3>
+        <h1 style={{textAlign: 'center'}}>About Us</h1>
+        <h3 style={{textAlign: 'center'}}>
 
           Team Name: Console Crew</h3>
         <p style={{ border: '1px solid #ccc', padding: '10px' }}>
