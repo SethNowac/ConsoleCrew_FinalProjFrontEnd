@@ -164,6 +164,48 @@ function ManageProjects() {
         }
     };
 
+    const handleAddNotes = async (event) => {
+  event.preventDefault();
+
+  let numOfItems = 0;
+
+  try {
+    const responseGet = await fetch(`http://localhost:1339/${localStorage.getItem("projectId")}/notes`, { method: "POST" });
+    const resultGet = await responseGet.json();
+    if (responseGet.status === 200) {
+      numOfItems = resultGet.length;
+    }
+  } catch (error) { }
+
+  const content = document.getElementById("notes").value;
+
+  const requestOptions = {
+    method: "POST",
+    body: JSON.stringify({
+      id: numOfItems,
+      content: content,
+      projectId: parseInt(localStorage.getItem("projectId")),
+    }),
+    headers: {
+      "Content-type": "application/json; charset=utf-8",
+    },
+  };
+
+  try {
+    const response = await fetch(`http://localhost:1339/${localStorage.getItem("projectId")}/notes`, requestOptions);
+    const result = await response.json();
+    if (response.status === 400) {
+      navigate("/", { state: { errorMessage: result.errorMessage } });
+    } else if (response.status === 500) {
+      navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
+    } else {
+      // Handle the response or update the UI as needed
+    }
+  } catch (err) {
+    navigate("/", { state: { errorMessage: "Id already exists" } });
+  }
+};
+
     const handleAddItems = () => {
         setItems([...item, '']);
     }
@@ -395,9 +437,7 @@ function ManageProjects() {
                                             onChange={(e) => setNotes(e.target.value)}
                                         ></textarea>
                                     </div>
-                                    <button onClick={handleSaveNotes} className="button-49">
-                                        {editMode ? 'Update Note' : 'Add Note'}
-                                    </button>
+                                    
                                     <ul>
                                         {notesList.map((note) => (
                                             <li key={note.id}>
@@ -407,7 +447,9 @@ function ManageProjects() {
                                             </li>
                                         ))}
                                     </ul>
-                                    
+                                    <form onSubmit={handleAddNotes}>
+                                        <button id="submit" onClick={handleSaveNotes} className="button-49">Add Notes</button>
+                                    </form>
                                 </div>
                             )}
                             {format === 'sketchbook' && (
