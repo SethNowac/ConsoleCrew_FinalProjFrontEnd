@@ -24,6 +24,9 @@ function ManageProjects() {
     const [taskIssue, setTaskIssue] = useState('');
     const [item, setItems] = useState([]);
     const [notes, setNotes] = useState('');
+    const [noteId, setNoteId] = useState(0);
+    const [editMode, setEditMode] = useState(false);
+    const [notesList, setNotesList] = useState([]);
     const [showTextArea, setShowTextArea] = useState(false);
     const [sketchData, setSketchData] = useState(null);
     const [storyboardTitle, setStoryboardTitle] = useState('');
@@ -130,13 +133,7 @@ function ManageProjects() {
             const responseGet = await fetch("http://localhost:1339/tasklogs", { method: "GET", credentials: "include" });
             const resultGet = await responseGet.json();
             if (responseGet.status === 200) {
-                if(resultGet.length !== 0) {
-                    for(let i = 0; i < resultGet.length; i++) {
-                        if(resultGet[i].id > numOfItems) {
-                            numOfItems = resultGet[i].id;
-                        }
-                    }
-                }
+                numOfItems = resultGet.length;
             }
         } catch (error) { }
 
@@ -144,7 +141,7 @@ function ManageProjects() {
             method: "POST",
             credentials: "include",
             body: JSON.stringify({
-                id: numOfItems + 1,
+                id: numOfItems,
                 issue: taskIssue,
                 projectId: parseInt(localStorage.getItem("projectId")),
             }),
@@ -164,39 +161,104 @@ function ManageProjects() {
                 setTasks([...tasks, result]);
             }
         } catch (err) {
-            navigate("/", { state: { errorMessage: "You are not authorized to access this page" } });
+            navigate("/", { state: { errorMessage: "Id already exists" } });
         }
     };
+
+    const handleAddNotes = async (event) => {
+  event.preventDefault();
+
+  let numOfItems = 0;
+
+  try {
+    const responseGet = await fetch(`http://localhost:1339/${localStorage.getItem("projectId")}/notes`, { method: "POST" });
+    const resultGet = await responseGet.json();
+    if (responseGet.status === 200) {
+      numOfItems = resultGet.length;
+    }
+  } catch (error) { }
+
+  const content = document.getElementById("notes").value;
+
+  const requestOptions = {
+    method: "POST",
+    body: JSON.stringify({
+      id: numOfItems,
+      content: content,
+      projectId: parseInt(localStorage.getItem("projectId")),
+    }),
+    headers: {
+      "Content-type": "application/json; charset=utf-8",
+    },
+  };
+
+  try {
+    const response = await fetch(`http://localhost:1339/${localStorage.getItem("projectId")}/notes`, requestOptions);
+    const result = await response.json();
+    if (response.status === 400) {
+      navigate("/", { state: { errorMessage: result.errorMessage } });
+    } else if (response.status === 500) {
+      navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
+    } else {
+      // Handle the response or update the UI as needed
+    }
+  } catch (err) {
+    navigate("/", { state: { errorMessage: "Id already exists" } });
+  }
+};
 
     const handleAddItems = () => {
         setItems([...item, '']);
     }
+
+    const handleSaveNote = () => {
+        if (editMode) {
+            // Editing existing note
+            const updatedNotesList = notesList.map((note) => {
+                if (note.id === noteId) {
+                    return { id: noteId, content: notes };
+                }
+                return note;
+            });
+            setNotesList(updatedNotesList);
+            setEditMode(false);
+        } else {
+            // Adding new note
+            const newNote = { id: Date.now(), content: notes };
+            setNotesList([...notesList, newNote]);
+        }
+
+        setNotes('');
+    };
+
+    const handleEditNote = (note) => {
+        setNotes(note.content);
+        setNoteId(note.id);
+        setEditMode(true);
+    };
+
+    const handleDeleteNote = (noteId) => {
+        const updatedNotesList = notesList.filter((note) => note.id !== noteId);
+        setNotesList(updatedNotesList);
+    };
 
     const handleRemoveTask = async (event, index) => {
         event.preventDefault();
         let result;
 
         try {
-            const responseGet = await fetch("http://localhost:1339/tasklogs/"+index, { method: "DELETE", credentials: "include" });
+            const responseGet = await fetch("http://localhost:1339/tasklogs/" + index, { method: "DELETE", credentials: "include" });
             result = responseGet.json();
             if (responseGet.status === 200) {
-                let taskIndex;
                 const updatedTasks = [...tasks];
-
-                for(let i = 0; i < updatedTasks.length; i++) {
-                    if(updatedTasks[i].id === index) {
-                        taskIndex = i;
-                        break;
-                    }
-                }
-                updatedTasks.splice(taskIndex, 1);
+                updatedTasks.splice(index, 1);
                 setTasks(updatedTasks);
             } else if (responseGet.status === 400) {
                 navigate("/", { state: { errorMessage: result.errorMessage } });
             } else {
                 navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
             }
-        } catch (error) { 
+        } catch (error) {
             navigate("/systemerror", { state: { errorMessage: "You are not authorized to access this page" } });
         }
     };
@@ -204,17 +266,8 @@ function ManageProjects() {
     const handleTaskTextChange = async (event, index) => {
         event.preventDefault();
 
-        let taskIndex;
         const updatedTasks = [...tasks];
-
-        for(let i = 0; i < updatedTasks.length; i++) {
-            if(updatedTasks[i].id === index) {
-                taskIndex = i;
-                break;
-            }
-        }
-
-        updatedTasks[taskIndex].notes = event.target.value;
+        updatedTasks[index].notes = event.target.value;
         setTasks(updatedTasks);
 
         const requestOptions = {
@@ -222,8 +275,8 @@ function ManageProjects() {
             credentials: "include",
             body: JSON.stringify({
                 id: index,
-                newIssue: updatedTasks[taskIndex].issue,
-                isResolved: updatedTasks[taskIndex].isResolved,
+                newIssue: updatedTasks[index].issue,
+                isResolved: updatedTasks[index].isResolved,
                 newNotes: event.target.value,
             }),
             headers: {
@@ -246,17 +299,8 @@ function ManageProjects() {
     const handleTaskCheckboxChange = async (event, index) => {
         event.preventDefault();
 
-        let taskIndex;
         const updatedTasks = [...tasks];
-
-        for(let i = 0; i < updatedTasks.length; i++) {
-            if(updatedTasks[i].id === index) {
-                taskIndex = i;
-                break;
-            }
-        }
-
-        updatedTasks[taskIndex].isResolved = event.target.checked;
+        updatedTasks[index].isResolved = event.target.checked;
         setTasks(updatedTasks);
 
         const requestOptions = {
@@ -264,9 +308,9 @@ function ManageProjects() {
             credentials: "include",
             body: JSON.stringify({
                 id: index,
-                newIssue: updatedTasks[taskIndex].issue,
+                newIssue: updatedTasks[index].issue,
                 isResolved: event.target.checked,
-                newNotes: updatedTasks[taskIndex].notes,
+                newNotes: updatedTasks[index].notes,
             }),
             headers: {
                 "Content-type": "application/json; charset=utf-8",
@@ -284,6 +328,8 @@ function ManageProjects() {
             navigate("/", { state: { errorMessage: "You are not authorized to access this page" } });
         }
     }
+
+
 
     const handleItemChange = (event, index) => {
         const updatedItems = [...item];
@@ -312,12 +358,12 @@ function ManageProjects() {
             <header style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', padding: '20px' }}>
                 <h1>Game Organizer</h1>
                 <div>
-                {isLoggedIn && (
-                    <>
-                    <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
-                    <NavButton to="/create-project" label="Create Project" />
-                    <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
-                    </>)}
+                    {isLoggedIn && (
+                        <>
+                            <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
+                            <NavButton to="/create-project" label="Create Project" />
+                            <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
+                        </>)}
                 </div>
             </header>
             <div style={{ display: 'flex', padding: '20px' }}>
@@ -379,7 +425,9 @@ function ManageProjects() {
                                         <input id="text" placeholder="Task name..." onChange={(e) => setTaskIssue(e.target.value)} required />
                                         <button id="submit">Add Task</button>
                                     </form>
+                                    <button onClick={handleSaveTask} className="button-49">Save Project</button>
                                 </div>
+
                             )}
                             {format === 'notes' && (
                                 <div>
@@ -392,8 +440,19 @@ function ManageProjects() {
                                             onChange={(e) => setNotes(e.target.value)}
                                         ></textarea>
                                     </div>
-
-                                    <button onClick={handleSaveNotes} className="button-49">Save Project</button>
+                                    
+                                    <ul>
+                                        {notesList.map((note) => (
+                                            <li key={note.id}>
+                                                <span>{note.content}</span>
+                                                <button onClick={() => handleEditNote(note)}>Edit</button>
+                                                <button onClick={() => handleDeleteNote(note.id)}>Delete</button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <form onSubmit={handleAddNotes}>
+                                        <button id="submit" onClick={handleSaveNotes} className="button-49">Add Notes</button>
+                                    </form>
                                 </div>
                             )}
                             {format === 'sketchbook' && (
