@@ -4,6 +4,7 @@ import Alert from 'react-bootstrap/Alert';
 import NavButton from '../components/NavButton';
 import { ProjectContext } from './ProjectContext';
 import { LoggedInContext } from '../components/App';
+import {AllProjects} from "../components/AllProjects";
 
 function ExistingProjects() {
   const { project } = useContext(ProjectContext);
@@ -104,29 +105,7 @@ function ExistingProjects() {
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px' }}>
         <div style={{ border: '1px solid #ccc', padding: '20px', width: '40%' }}>
           <h2>Recent Edited Projects</h2>
-          <ul style={{ border: '1px solid #ccc', padding: '10px' }}>
-            {recentTasks.map((task) => (
-              <li key={task.id}>
-
-                {task.text}
-              </li>
-            ))}
-            {recentNotes ? (
-              <li>{recentNotes.notes}</li>
-            ) : (
-              <li>No recent notes found.</li>
-            )}
-            {sketchTitle ? (
-              <li>{sketchTitle.title}</li>
-            ) : (
-              <li>No recent sketches found.</li>
-            )}
-            {storyBoardTitle ? (
-              <li>{storyBoardTitle.title}</li>
-            ) : (
-              <li>No recent stories found.</li>
-            )}
-          </ul>
+          <AllProjects/>
         </div>
         <div style={{ border: '1px solid #ccc', padding: '20px', width: '50%' }}>
           <h2>Recent Tasks</h2>

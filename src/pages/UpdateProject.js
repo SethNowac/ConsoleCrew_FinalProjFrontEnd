@@ -12,24 +12,18 @@ function UpdateProject() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let numOfItems = 0;
-
-    try {
-        const responseGet = await fetch("http://localhost:1339/projects", { method: "GET" });
-        const resultGet = await responseGet.json();
-        if (responseGet.status === 200) {
-            numOfItems = resultGet.length;
-        }
-    } catch (error) { }
+    if(sessionStorage.getItem("updateProjectId") == null) {
+        alert("No project has been selected!");
+        return;
+    }
 
     const requestOptions = {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify({
-          id: numOfItems,
-          title: title.current.value,
-          desc: desc.current.value,
-          tag: tag.current.value,
-          userId: parseInt(localStorage.getItem("userId")),
+          id: parseInt(sessionStorage.getItem("updateProjectId")),
+          newTitle: title.current.value,
+          newDesc: desc.current.value,
+          newTag: tag.current.value,
       }),
       headers:{
           "Content-type": "application/json; charset=utf-8",
@@ -45,6 +39,7 @@ function UpdateProject() {
           navigate("/systemerror", { state: { errorMessage : result.errorMessage}});
       }    
       else{
+          sessionStorage.removeItem("updateProjectId");
           navigate("/existing-projects");
       }
     } catch (err){
@@ -68,7 +63,7 @@ function UpdateProject() {
             borderRadius: '5px',
           }} onSubmit={handleSubmit}
         >
-            <h1 style={{ textAlign: 'center' }}>Create Project</h1>
+            <h1 style={{ textAlign: 'center' }}>Update Project</h1>
             <label htmlFor="name">Title</label>
             <input style={{ display: 'block', width: '250px' }} id="text" placeholder="Title..." ref={title} required />
             <br/>
@@ -87,7 +82,7 @@ function UpdateProject() {
             </select>
 
             <br/>
-            <button style={{ display: 'block', width: '250px' }} id="submit" className='button-arounder'>Add Player</button>
+            <button style={{ display: 'block', width: '250px' }} id="submit" className='button-arounder'>Update</button>
         </form>
       </div>
     </>

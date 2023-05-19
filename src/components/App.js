@@ -17,6 +17,7 @@ import CreateProjectPage from "../pages/CreateProject"
 import { createContext, useEffect, useState } from 'react';
 import ProfilePage from "../pages/Profile";
 import backgroundImg from '../img/background.jpg';
+import UpdateProject from '../pages/UpdateProject';
 
 
 const LoggedInContext = createContext({
@@ -36,7 +37,7 @@ function App() {
     async function checkForLoggedIn() {
       try {
         /** Call auth, passing cookies to the back-end */
-        const response = await fetch("http://localhost:1339/session/auth", { method : "GET" });
+        const response = await fetch("http://localhost:1339/session/auth", { method : "GET", credentials: "include" });
         if (response.status === 200) {
           setIsLoggedIn(true);
         } else {
@@ -66,6 +67,7 @@ function App() {
             <Route path='/existing-projects' element={<ExistingProjectPage/>} />
             <Route path='/manage-projects' element={<ManageProjectPage />} />
             <Route path='/create-project' element={<CreateProjectPage />} />
+            <Route path='/update-project' element={<UpdateProject />} />
             <Route path="/profile" element={<ProfilePage />} />
         </Route>
           <Route path="*" element={<Navigate to="/" />} />

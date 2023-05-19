@@ -87,7 +87,7 @@ function CreateProject() {
             </select>
 
             <br/>
-            <button style={{ display: 'block', width: '250px' }} id="submit" className='button-arounder'>Add Player</button>
+            <button style={{ display: 'block', width: '250px' }} id="submit" className='button-arounder'>Add</button>
         </form>
       </div>
     </>

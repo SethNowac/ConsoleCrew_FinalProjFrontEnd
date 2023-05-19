@@ -14,20 +14,24 @@ function LogoutButton() {
                 method: "GET",
                 credentials: "include",
             };
-            const response = await fetch("http://localhost:1339/session/logout", { method : "GET" });
+            const response = await fetch("http://localhost:1339/session/logout", requestOptions);
             if(response.status === 401) {
                 alert("Already logged out on server. Will log out on front-end as well.");
                 setIsLoggedIn(false);
+                localStorage.removeItem("userId");
                 return;
             } else if (response.status === 200) {
                 setIsLoggedIn(false);
+                localStorage.removeItem("userId");
                 navigate("/");
             } else {
                 setIsLoggedIn(false);
+                localStorage.removeItem("userId");
                 navigate("/", { state: { errorMessage: "Unexpected issue on server logging out; will log out on front-end anyways." } });
             }
         } catch (error) {
             alert("An error occured. Logging out on front-end anyways.");
+            localStorage.removeItem("userId");
             setIsLoggedIn(false);
         }
     };
