@@ -130,14 +130,20 @@ function ManageProjects() {
             const responseGet = await fetch("http://localhost:1339/tasklogs", { method: "GET" });
             const resultGet = await responseGet.json();
             if (responseGet.status === 200) {
-                numOfItems = resultGet.length;
+                if(resultGet.length !== 0) {
+                    for(let i = 0; i < resultGet.length; i++) {
+                        if(resultGet[i].id > numOfItems) {
+                            numOfItems = resultGet[i].id;
+                        }
+                    }
+                }
             }
         } catch (error) { }
 
         const requestOptions = {
             method: "POST",
             body: JSON.stringify({
-                id: numOfItems,
+                id: numOfItems + 1,
                 issue: taskIssue,
                 projectId: parseInt(localStorage.getItem("projectId")),
             }),
@@ -173,8 +179,16 @@ function ManageProjects() {
             const responseGet = await fetch("http://localhost:1339/tasklogs/"+index, { method: "DELETE" });
             result = responseGet.json();
             if (responseGet.status === 200) {
+                let taskIndex;
                 const updatedTasks = [...tasks];
-                updatedTasks.splice(index, 1);
+
+                for(let i = 0; i < updatedTasks.length; i++) {
+                    if(updatedTasks[i].id === index) {
+                        taskIndex = i;
+                        break;
+                    }
+                }
+                updatedTasks.splice(taskIndex, 1);
                 setTasks(updatedTasks);
             } else if (responseGet.status === 400) {
                 navigate("/", { state: { errorMessage: result.errorMessage } });
@@ -189,16 +203,25 @@ function ManageProjects() {
     const handleTaskTextChange = async (event, index) => {
         event.preventDefault();
 
+        let taskIndex;
         const updatedTasks = [...tasks];
-        updatedTasks[index].notes = event.target.value;
+
+        for(let i = 0; i < updatedTasks.length; i++) {
+            if(updatedTasks[i].id === index) {
+                taskIndex = i;
+                break;
+            }
+        }
+
+        updatedTasks[taskIndex].notes = event.target.value;
         setTasks(updatedTasks);
 
         const requestOptions = {
             method: "PUT",
             body: JSON.stringify({
                 id: index,
-                newIssue: updatedTasks[index].issue,
-                isResolved: updatedTasks[index].isResolved,
+                newIssue: updatedTasks[taskIndex].issue,
+                isResolved: updatedTasks[taskIndex].isResolved,
                 newNotes: event.target.value,
             }),
             headers: {
@@ -221,17 +244,26 @@ function ManageProjects() {
     const handleTaskCheckboxChange = async (event, index) => {
         event.preventDefault();
 
+        let taskIndex;
         const updatedTasks = [...tasks];
-        updatedTasks[index].isResolved = event.target.checked;
+
+        for(let i = 0; i < updatedTasks.length; i++) {
+            if(updatedTasks[i].id === index) {
+                taskIndex = i;
+                break;
+            }
+        }
+
+        updatedTasks[taskIndex].isResolved = event.target.checked;
         setTasks(updatedTasks);
 
         const requestOptions = {
             method: "PUT",
             body: JSON.stringify({
                 id: index,
-                newIssue: updatedTasks[index].issue,
+                newIssue: updatedTasks[taskIndex].issue,
                 isResolved: event.target.checked,
-                newNotes: updatedTasks[index].notes,
+                newNotes: updatedTasks[taskIndex].notes,
             }),
             headers: {
                 "Content-type": "application/json; charset=utf-8",
