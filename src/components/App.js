@@ -16,7 +16,6 @@ import ManageProjectPage from "../pages/ManageProjects";
 import CreateProjectPage from "../pages/CreateProject"
 import { createContext, useEffect, useState } from 'react';
 import ProfilePage from "../pages/Profile";
-import backgroundImg from '../img/background.jpg';
 import UpdateProject from '../pages/UpdateProject';
 
 
