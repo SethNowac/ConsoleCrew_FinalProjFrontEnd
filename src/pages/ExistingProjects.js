@@ -104,7 +104,6 @@ function ExistingProjects() {
             <>
           <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
           <NavButton to="/create-project" label="Create Project" />
-          <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
           </>)}
         </div>
       </header>

@@ -12,7 +12,6 @@ function CreateProject() {
   const desc = useRef(null);
   const tag = useRef(null);
 
-  const navigate = useNavigate();
 
   /**
    * handleSubmit function is triggered when the form is submitted.

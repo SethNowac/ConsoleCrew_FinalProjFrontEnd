@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "../style.css";
 
 /**
  * CreateAccountPage component renders a form for creating a new user account.
  */
 const CreateAccountPage = () => {
+  const navigate = useNavigate();
+
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address, setAddress] = useState('');
@@ -109,9 +112,10 @@ const CreateAccountPage = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
+    
     if (validateForm()) {
       // Perform account creation logic
       console.log(`First Name: ${firstName}`);
@@ -130,6 +134,31 @@ const CreateAccountPage = () => {
         password,
         email,
       };
+
+      const requestOptions = {
+        method: "POST",
+        body: JSON.stringify({
+            username: email,
+            password: password
+        }),
+        headers:{
+            "Content-type": "application/json; charset=utf-8",
+        },
+      };
+      try{
+          const response = await fetch("http://localhost:1339/users/register", requestOptions);
+          const result = await response.json();
+          if (response.status === 400) {
+              navigate("/", { state: { errorMessage: result.errorMessage } });
+          }else if(response.status === 500){
+              navigate("/systemerror", { state: { errorMessage : result.errorMessage}});
+          }    
+          else{
+              console.log("Successfully created a new user");
+          }
+      } catch (err){
+          navigate("/", { state: { errorMessage: "Id already exists" } });
+      }
 
       try {
         // await userService.createUser(user);
