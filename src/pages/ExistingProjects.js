@@ -4,9 +4,11 @@ import Alert from 'react-bootstrap/Alert';
 import NavButton from '../components/NavButton';
 import { ProjectContext } from './ProjectContext';
 import { AllProjects } from '../components/AllProjects';
+import { LoggedInContext } from '../components/App';
 
 function ExistingProjects() {
   const { project } = useContext(ProjectContext);
+  const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
   const [projectName, setProjectName] = useState('');
 
   // Example data for recent edited projects, tasks, notes, sketches, and storyboard entries
@@ -28,8 +30,12 @@ function ExistingProjects() {
       <header style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', padding: '20px' }}>
         <h1>Game Organizer</h1>
         <div>
+        {isLoggedIn && (
+            <>
           <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
+          <NavButton to="/create-project" label="Create Project" />
           <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
+          </>)}
         </div>
       </header>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px' }}>

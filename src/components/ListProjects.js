@@ -22,7 +22,9 @@ function ListProject({ projects }){
             <ul>
                 {projects.map((project) => (
                     <li key={project.id}>
-                        <Button id={project.id} onClick={handleSubmit}>{project.title}</Button>
+                        <Button style={{margin: "5px"}} id={project.id} onClick={handleSubmit}>{project.title}</Button>
+                        <Button variant="link" id={project.id} size="sm" onClick={handleSubmit}>Update</Button>
+                        <Button variant="link" id={project.id} size="sm" onClick={handleSubmit}>Delete</Button>
                     </li>
                 ))}
             </ul>

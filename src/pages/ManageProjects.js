@@ -1,11 +1,12 @@
 import React, { useState, useRef, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
 import NavButton from '../components/NavButton';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import { SketchPicker } from 'react-color';
 import { ProjectContext, ProjectProvider } from './ProjectContext';
 import "../style.css";
+import { LoggedInContext } from '../components/App';
 
 function ManageProjects() {
     const [projectName, setProjectName] = useState('');
@@ -17,6 +18,7 @@ function ManageProjects() {
     const [eraserActive, setEraserActive] = useState(false);
     const [showColorPanel, setShowColorPanel] = useState(false);
     const [tasks, setTasks] = useState([]);
+    const [taskIssue, setTaskIssue] = useState('');
     const [item, setItems] = useState([]);
     const [notes, setNotes] = useState('');
     const [showTextArea, setShowTextArea] = useState(false);
@@ -26,9 +28,12 @@ function ManageProjects() {
     const sketchRef = useRef(null);
     const { addProject } = useContext(ProjectContext);
 
+    const navigate = useNavigate();
+
+    const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
 
     // Save and restore state when switching between pages
-    const handleFormatChange = (selectedFormat) => {
+    const handleFormatChange = async (selectedFormat) => {
         // Save the state of the current page
         if (format === 'tasks') {
             localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -43,8 +48,18 @@ function ManageProjects() {
 
         // Restore the state of the selected page
         if (selectedFormat === 'tasks') {
-            const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-            setTasks(savedTasks);
+            try {
+                /** Call auth, passing cookies to the back-end */
+                const response = await fetch("http://localhost:1339/tasklogs/" + localStorage.getItem("projectId"), { method: "GET" });
+                const result = await response.json();
+                if (response.status === 200) {
+                    setTasks(result);
+                } else {
+                    setTasks([]); // may be unnecessary, but do this just in case to be more secure
+                }
+            } catch (error) {
+                setTasks([]);
+            }
         } else if (selectedFormat === 'notes') {
             const savedNotes = localStorage.getItem('notes') || '';
             setNotes(savedNotes);
@@ -96,25 +111,135 @@ function ManageProjects() {
         }
     };
 
-    const handleAddTask = () => {
-        setTasks([...tasks, '']);
+    // Every time a task is added, add it to tasklog in back-end. If successful, insert on page
+    const handleAddTask = async (event) => {
+        event.preventDefault();
+
+        let numOfItems = 0;
+
+        try {
+            const responseGet = await fetch("http://localhost:1339/tasklogs", { method: "GET" });
+            const resultGet = await responseGet.json();
+            if (responseGet.status === 200) {
+                numOfItems = resultGet.length;
+            }
+        } catch (error) { }
+
+        const requestOptions = {
+            method: "POST",
+            body: JSON.stringify({
+                id: numOfItems,
+                issue: taskIssue,
+                projectId: parseInt(localStorage.getItem("projectId")),
+            }),
+            headers: {
+                "Content-type": "application/json; charset=utf-8",
+            },
+        };
+        try {
+            const response = await fetch("http://localhost:1339/tasklogs", requestOptions);
+            const result = await response.json();
+            if (response.status === 400) {
+                navigate("/", { state: { errorMessage: result.errorMessage } });
+            } else if (response.status === 500) {
+                navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
+            }
+            else {
+                setTasks([...tasks, result]);
+            }
+        } catch (err) {
+            navigate("/", { state: { errorMessage: "Id already exists" } });
+        }
     };
 
     const handleAddItems = () => {
         setItems([...item, '']);
     }
 
-    const handleRemoveTask = (index) => {
-        const updatedTasks = [...tasks];
-        updatedTasks.splice(index, 1);
-        setTasks(updatedTasks);
+    const handleRemoveTask = async (event, index) => {
+        event.preventDefault();
+        let result;
+
+        try {
+            const responseGet = await fetch("http://localhost:1339/tasklogs/"+index, { method: "DELETE" });
+            result = responseGet.json();
+            if (responseGet.status === 200) {
+                const updatedTasks = [...tasks];
+                updatedTasks.splice(index, 1);
+                setTasks(updatedTasks);
+            } else if (responseGet.status === 400) {
+                navigate("/", { state: { errorMessage: result.errorMessage } });
+            } else {
+                navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
+            }
+        } catch (error) { 
+            navigate("/systemerror", { state: { errorMessage: "Id already exists" } });
+        }
     };
 
-    const handleTaskChange = (event, index) => {
+    const handleTaskTextChange = async (event, index) => {
+        event.preventDefault();
+
         const updatedTasks = [...tasks];
-        updatedTasks[index] = event.target.value;
+        updatedTasks[index].notes = event.target.value;
         setTasks(updatedTasks);
+
+        const requestOptions = {
+            method: "PUT",
+            body: JSON.stringify({
+                id: index,
+                newIssue: updatedTasks[index].issue,
+                isResolved: updatedTasks[index].isResolved,
+                newNotes: event.target.value,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=utf-8",
+            },
+        };
+        try {
+            const response = await fetch("http://localhost:1339/tasklogs", requestOptions);
+            const result = await response.json();
+            if (response.status === 400) {
+                navigate("/", { state: { errorMessage: result.errorMessage } });
+            } else if (response.status === 500) {
+                navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
+            }
+        } catch (err) {
+            navigate("/", { state: { errorMessage: "Id already exists" } });
+        }
     };
+
+    const handleTaskCheckboxChange = async (event, index) => {
+        event.preventDefault();
+
+        const updatedTasks = [...tasks];
+        updatedTasks[index].isResolved = event.target.checked;
+        setTasks(updatedTasks);
+
+        const requestOptions = {
+            method: "PUT",
+            body: JSON.stringify({
+                id: index,
+                newIssue: updatedTasks[index].issue,
+                isResolved: event.target.checked,
+                newNotes: updatedTasks[index].notes,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=utf-8",
+            },
+        };
+        try {
+            const response = await fetch("http://localhost:1339/tasklogs", requestOptions);
+            const result = await response.json();
+            if (response.status === 400) {
+                navigate("/", { state: { errorMessage: result.errorMessage } });
+            } else if (response.status === 500) {
+                navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
+            }
+        } catch (err) {
+            navigate("/", { state: { errorMessage: "Id already exists" } });
+        }
+    }
 
     const handleItemChange = (event, index) => {
         const updatedItems = [...item];
@@ -143,8 +268,12 @@ function ManageProjects() {
             <header style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', padding: '20px' }}>
                 <h1>Game Organizer</h1>
                 <div>
+                {isLoggedIn && (
+                    <>
                     <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
+                    <NavButton to="/create-project" label="Create Project" />
                     <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
+                    </>)}
                 </div>
             </header>
             <div style={{ display: 'flex', padding: '20px' }}>
@@ -183,25 +312,29 @@ function ManageProjects() {
                                 <div>
                                     <h3 style={{ textAlign: 'center' }}>Tasks</h3>
                                     <div>
-                                        {tasks.map((task, index) => (
-                                            <div key={index}>
+                                        {tasks.map((task) => (
+                                            <div key={task.id}>
+                                                <h6>{task.issue}</h6>
                                                 <input
                                                     type="checkbox"
-                                                    checked={task.completed}
-                                                // onChange={() => handleTaskCheckboxChange(index)}
+                                                    checked={task.isResolved}
+                                                    onChange={(event) => handleTaskCheckboxChange(event, task.id)}
                                                 />
                                                 <textarea
-                                                    value={task.text}
-                                                    onChange={(event) => handleTaskChange(event, index)}
+                                                    value={task.notes}
+                                                    onChange={(event) => handleTaskTextChange(event, task.id)}
                                                     style={{ height: '5vh', width: '50vw' }}
                                                     placeholder="Enter Your Task Here"
                                                 />
-                                                <button onClick={() => handleRemoveTask(index)}>Remove</button>
+                                                <button onClick={(event) => handleRemoveTask(event, task.id)}>Remove</button>
                                             </div>
                                         ))}
                                     </div>
-                                    <button onClick={handleAddTask}>Add Task</button>
-
+                                    <form onSubmit={handleAddTask}>
+                                        <label htmlFor="name">Name</label>
+                                        <input id="text" placeholder="Task name..." onChange={(e) => setTaskIssue(e.target.value)} required />
+                                        <button id="submit">Add Task</button>
+                                    </form>
                                 </div>
                             )}
                             {format === 'notes' && (

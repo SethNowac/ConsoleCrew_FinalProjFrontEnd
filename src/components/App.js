@@ -13,6 +13,7 @@ import LoginPage from "../pages/LoginPage";
 import CreateAccountPage from '../pages/CreateAccountPage';
 import ExistingProjectPage from "../pages/ExistingProjects";
 import ManageProjectPage from "../pages/ManageProjects";
+import CreateProjectPage from "../pages/CreateProject"
 import { createContext, useEffect, useState } from 'react';
 import ProfilePage from "../pages/Profile";
 import backgroundImg from '../img/background.jpg';
@@ -64,6 +65,7 @@ function App() {
             <Route path="/create-account" element={<CreateAccountPage/>} />
             <Route path='/existing-projects' element={<ExistingProjectPage/>} />
             <Route path='/manage-projects' element={<ManageProjectPage />} />
+            <Route path='/create-project' element={<CreateProjectPage />} />
             <Route path="/profile" element={<ProfilePage />} />
         </Route>
           <Route path="*" element={<Navigate to="/" />} />

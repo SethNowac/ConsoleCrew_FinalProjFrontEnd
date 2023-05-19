@@ -4,6 +4,8 @@ import '../style.css';
 import Alert from 'react-bootstrap/Alert';
 import NavButton from "../components/NavButton";
 import { SystemError } from './SystemError';
+import { LoggedInContext } from '../components/App';
+import { useContext } from 'react';
 
 /**
  * Home page component that displays the main content of the application.
@@ -11,6 +13,7 @@ import { SystemError } from './SystemError';
  */
 function Home() {
   const [searchParams, setSearchParam] = useSearchParams();
+  const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
   const { state } = useLocation();
 
   return (
@@ -21,8 +24,12 @@ function Home() {
        <header style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', padding: '20px' }}>
         <h1>Game Organizer</h1>
         <div>
+        {isLoggedIn && (
+            <>
           <NavButton to="/existing-projects" label="Existing Projects" style={{ marginRight: '10px', color: 'white' }}>Existing Projects</NavButton>
+          <NavButton to="/create-project" label="Create Project" />
           <NavButton to="/profile" label="Profile" style={{ color: 'white' }}>Profile</NavButton>
+          </>)}
         </div>
       </header>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px' }}>
