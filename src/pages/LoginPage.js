@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { LoggedInContext } from "../components/App";
 import "../style.css";
 
+/**
+ * LoginPage component displays a login form.
+ */
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,16 +15,28 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
+  /**
+   * Handles the change event of the email input.
+   * @param {Object} event - The event object.
+   */
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
     setEmailError("");
   };
 
+  /**
+   * Handles the change event of the password input.
+   * @param {Object} event - The event object.
+   */
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
     setPasswordError("");
   };
 
+  /**
+   * Handles the form submission.
+   * @param {Object} event - The event object.
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -37,8 +52,6 @@ const LoginPage = () => {
 
     // Perform email and password validation here
     // You can use your MongoDB integration to check if the email exists and the password matches
-
-
 
     const requestOptions = {
       method: "POST",

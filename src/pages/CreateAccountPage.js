@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import "../style.css";
-// import userService from "../userService";
 
+/**
+ * CreateAccountPage component renders a form for creating a new user account.
+ */
 const CreateAccountPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -17,6 +19,10 @@ const CreateAccountPage = () => {
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
   };
+
+  // Define similar event handler functions for other form fields...
+
+  
 
   const handleLastNameChange = (event) => {
     setLastName(event.target.value);
@@ -42,50 +48,64 @@ const CreateAccountPage = () => {
     setEmail(event.target.value);
   };
 
+  /**
+   * validateForm function validates the form inputs and sets the errors state accordingly.
+   * It returns true if the form is valid (no errors), and false otherwise.
+   */
   const validateForm = () => {
     const errors = {};
 
+    // Define regex patterns for validation
     const nameRegex = /^[A-Za-z]+$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
 
+    // Validate firstName
     if (firstName.trim() === '') {
       errors.firstName = 'First Name is required';
     } else if (!firstName.match(nameRegex)) {
       errors.firstName = 'First Name can only contain letters';
     }
 
+    // Validate lastName
     if (lastName.trim() === '') {
       errors.lastName = 'Last Name is required';
     } else if (!lastName.match(nameRegex)) {
       errors.lastName = 'Last Name can only contain letters';
     }
 
+     // Validate address
     if (address.trim() === '') {
       errors.address = 'Address is required';
     }
 
+    // Validate userName
     if (userName.trim() === '') {
       errors.userName = 'User Name is required';
     }
 
+    // Validate email
     if (!email.includes('@')) {
       errors.email = 'Invalid email';
     }
 
+    // Validate password
     if (password.trim() === '') {
       errors.password = 'Password is required';
     } else if (!password.match(passwordRegex)) {
       errors.password = 'Must contain at least 1 letter and 1 number'
     }
 
+    // Validate reenteredPassword
     if (reenteredPassword.trim() === '') {
       errors.reenteredPassword = 'Please re-enter your password';
     } else if (password !== reenteredPassword) {
       errors.reenteredPassword = 'Password do not match';
     }
 
+     // Set the errors state
     setErrors(errors);
 
+    // Return true if no errors, false otherwise
     return Object.keys(errors).length === 0;
   };
 
@@ -93,6 +113,7 @@ const CreateAccountPage = () => {
     event.preventDefault();
 
     if (validateForm()) {
+      // Perform account creation logic
       console.log(`First Name: ${firstName}`);
       console.log(`Last Name: ${lastName}`);
       console.log(`Address: ${address}`);
@@ -100,6 +121,7 @@ const CreateAccountPage = () => {
       console.log(`Password: ${password}`);
       console.log(`Email: ${email}`);
 
+      // Reset form fields and states
       const user = {
         firstName,
         lastName,

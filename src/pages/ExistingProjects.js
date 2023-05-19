@@ -6,6 +6,9 @@ import { ProjectContext } from './ProjectContext';
 import { LoggedInContext } from '../components/App';
 import {AllProjects} from "../components/AllProjects";
 
+/**
+ * ExistingProjects component displays the existing projects and recent activities related to the projects.
+ */
 function ExistingProjects() {
   const { project } = useContext(ProjectContext);
   const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
@@ -16,19 +19,10 @@ function ExistingProjects() {
   const [sketchTitle, setSketchTitle] = useState('');
   const [storyBoardTitle, setStoryboardTitle] = useState(null);
 
-  // Example data for recent edited projects, tasks, notes, sketches, and storyboard entries
-  const recentEditedProjects = project?.recentEditedProjects || [];
-  // const recentTasks = project?.recentTasks || [];
-
-
-
-  const handleSaveProject = () => {
-    // Logic to save the project
-    // Assuming you have the project name available as a variable named `projectName`
-    // Save the project name to the state variable
-    setProjectName(projectName);
-  };
-
+ /**
+   * Retrieves the project tasks from local storage.
+   * @returns {Array} The retrieved project tasks.
+   */
   const retrieveProjectTasks = () => {
     const tasksData = localStorage.getItem('projectTasks');
 
@@ -39,6 +33,10 @@ function ExistingProjects() {
     return [];
   };
 
+  /**
+   * Retrieves the project notes from local storage.
+   * @returns {Array} The retrieved project notes.
+   */
   const retrieveProjectNotes = () => {
     const notesData = localStorage.getItem('projectNotes');
 
@@ -49,6 +47,10 @@ function ExistingProjects() {
     return [];
   }
 
+  /**
+   * Retrieves the project sketches from local storage.
+   * @returns {Array} The retrieved project sketches.
+   */
   const retrieveProjectSketches = () => {
     const sketchesData = localStorage.getItem('projectSketch');
 
@@ -59,6 +61,10 @@ function ExistingProjects() {
     return [];
   }
 
+  /**
+   * Retrieves the project storyboards from local storage.
+   * @returns {Array} The retrieved project storyboards.
+   */
   const retrieveProjectStoryBoards = () => {
     const storyBoardData = localStorage.getItem('projectStoryBoard');
 
@@ -113,7 +119,7 @@ function ExistingProjects() {
             {recentTasks.map((task) => (
               <li key={task.id}>
 
-                {task.text}
+                {task.issue}
               </li>
             ))}
           </ul>

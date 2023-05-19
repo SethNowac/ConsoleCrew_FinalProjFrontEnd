@@ -5,6 +5,10 @@ import "../style.css";
 import { LoggedInContext } from "./App";
 import LogoutButton from "./LogoutButton";
 
+/**
+ * Header component displays the navigation links and buttons in the application header.
+ * It conditionally renders different buttons based on the user's login status.
+ */
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
 

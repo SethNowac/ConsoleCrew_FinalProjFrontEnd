@@ -2,6 +2,9 @@ import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../style.css";
 
+/**
+ * CreateProject component renders a form for creating a new project.
+ */
 function CreateProject() {
   const title = useRef(null);
   const desc = useRef(null);
@@ -9,12 +12,17 @@ function CreateProject() {
 
   const navigate = useNavigate();
 
+  /**
+   * handleSubmit function is triggered when the form is submitted.
+   * It sends a POST request to create a new project.
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     let numOfItems = 0;
 
     try {
+      // Fetch the existing projects to determine the number of items
         const responseGet = await fetch("http://localhost:1339/projects", { method: "GET" });
         const resultGet = await responseGet.json();
         if (responseGet.status === 200) {
@@ -22,6 +30,7 @@ function CreateProject() {
         }
     } catch (error) { }
 
+    // Prepare the request body
     const requestOptions = {
       method: "POST",
       body: JSON.stringify({
@@ -37,6 +46,7 @@ function CreateProject() {
     };
 
     try{
+       // Send the POST request to create a new project
       const response = await fetch("http://localhost:1339/projects", requestOptions);
       const result = await response.json();
       if (response.status === 400) {
