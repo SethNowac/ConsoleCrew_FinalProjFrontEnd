@@ -18,7 +18,9 @@ function LogoutButton() {
             if(response.status === 401) {
                 alert("Already logged out on server. Will log out on front-end as well.");
                 setIsLoggedIn(false);
+                navigate("/");
                 localStorage.removeItem("userId");
+                sessionStorage.removeItem("updateProjectId")
                 return;
             } else if (response.status === 200) {
                 setIsLoggedIn(false);
@@ -32,6 +34,7 @@ function LogoutButton() {
         } catch (error) {
             alert("An error occured. Logging out on front-end anyways.");
             localStorage.removeItem("userId");
+            navigate("/");
             setIsLoggedIn(false);
         }
     };

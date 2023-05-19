@@ -12,7 +12,7 @@ function AllProjects(){
         async function getListOfProjects() {
           try {
             /** Call auth, passing cookies to the back-end */
-            const response = await fetch("http://localhost:1339/projects/"+localStorage.getItem("userId"), { method : "GET" });
+            const response = await fetch("http://localhost:1339/projects/"+localStorage.getItem("userId"), { method : "GET", credentials: "include" });
             const result = await response.json();
             if (response.status === 200) {
               setProjects(result);

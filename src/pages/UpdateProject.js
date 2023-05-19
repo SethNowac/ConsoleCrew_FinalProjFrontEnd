@@ -19,6 +19,7 @@ function UpdateProject() {
 
     const requestOptions = {
       method: "PUT",
+      credentials: "include",
       body: JSON.stringify({
           id: parseInt(sessionStorage.getItem("updateProjectId")),
           newTitle: title.current.value,
@@ -43,7 +44,7 @@ function UpdateProject() {
           navigate("/existing-projects");
       }
     } catch (err){
-        navigate("/", { state: { errorMessage: "Id already exists" } });
+        navigate("/", { state: { errorMessage: "You are not authorized to access this page" } });
     }
   };
 

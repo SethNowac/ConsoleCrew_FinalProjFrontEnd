@@ -28,7 +28,7 @@ function ListProject({ projects }){
         
         let result;
         try {
-            const responseGet = await fetch("http://localhost:1339/projects/"+event.target.id, { method: "DELETE" });
+            const responseGet = await fetch("http://localhost:1339/projects/"+event.target.id, { method: "DELETE", credentials: "include" });
             result = responseGet.json();
             if (responseGet.status === 200) {
                 console.log("Deleting a project was successful");
@@ -38,7 +38,7 @@ function ListProject({ projects }){
                 navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
             }
         } catch (error) { 
-            navigate("/systemerror", { state: { errorMessage: "Id already exists" } });
+            navigate("/systemerror", { state: { errorMessage: "You are not authorized to access this page" } });
         }
     }
 

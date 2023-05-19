@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import "../style.css";
 
 function CreateProject() {
+  const navigate = useNavigate();
+  
   const title = useRef(null);
   const desc = useRef(null);
   const tag = useRef(null);
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -15,7 +15,7 @@ function CreateProject() {
     let numOfItems = 0;
 
     try {
-        const responseGet = await fetch("http://localhost:1339/projects", { method: "GET" });
+        const responseGet = await fetch("http://localhost:1339/projects", { method: "GET", credentials: "include" });
         const resultGet = await responseGet.json();
         if (responseGet.status === 200) {
             numOfItems = resultGet.length;
@@ -24,6 +24,7 @@ function CreateProject() {
 
     const requestOptions = {
       method: "POST",
+      credentials: "include",
       body: JSON.stringify({
           id: numOfItems,
           title: title.current.value,
@@ -48,7 +49,7 @@ function CreateProject() {
           navigate("/existing-projects");
       }
     } catch (err){
-        navigate("/", { state: { errorMessage: "Id already exists" } });
+        navigate("/", { state: { errorMessage: "You are not authorized to access this page" } });
     }
   };
 

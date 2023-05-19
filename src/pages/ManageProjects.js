@@ -55,7 +55,7 @@ function ManageProjects() {
         if (selectedFormat === 'tasks') {
             try {
                 /** Call auth, passing cookies to the back-end */
-                const response = await fetch("http://localhost:1339/tasklogs/" + localStorage.getItem("projectId"), { method: "GET" });
+                const response = await fetch("http://localhost:1339/tasklogs/" + localStorage.getItem("projectId"), { method: "GET", credentials: "include" });
                 const result = await response.json();
                 if (response.status === 200) {
                     setTasks(result);
@@ -127,7 +127,7 @@ function ManageProjects() {
         let numOfItems = 0;
 
         try {
-            const responseGet = await fetch("http://localhost:1339/tasklogs", { method: "GET" });
+            const responseGet = await fetch("http://localhost:1339/tasklogs", { method: "GET", credentials: "include" });
             const resultGet = await responseGet.json();
             if (responseGet.status === 200) {
                 if(resultGet.length !== 0) {
@@ -142,6 +142,7 @@ function ManageProjects() {
 
         const requestOptions = {
             method: "POST",
+            credentials: "include",
             body: JSON.stringify({
                 id: numOfItems + 1,
                 issue: taskIssue,
@@ -163,7 +164,7 @@ function ManageProjects() {
                 setTasks([...tasks, result]);
             }
         } catch (err) {
-            navigate("/", { state: { errorMessage: "Id already exists" } });
+            navigate("/", { state: { errorMessage: "You are not authorized to access this page" } });
         }
     };
 
@@ -176,7 +177,7 @@ function ManageProjects() {
         let result;
 
         try {
-            const responseGet = await fetch("http://localhost:1339/tasklogs/"+index, { method: "DELETE" });
+            const responseGet = await fetch("http://localhost:1339/tasklogs/"+index, { method: "DELETE", credentials: "include" });
             result = responseGet.json();
             if (responseGet.status === 200) {
                 let taskIndex;
@@ -196,7 +197,7 @@ function ManageProjects() {
                 navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
             }
         } catch (error) { 
-            navigate("/systemerror", { state: { errorMessage: "Id already exists" } });
+            navigate("/systemerror", { state: { errorMessage: "You are not authorized to access this page" } });
         }
     };
 
@@ -218,6 +219,7 @@ function ManageProjects() {
 
         const requestOptions = {
             method: "PUT",
+            credentials: "include",
             body: JSON.stringify({
                 id: index,
                 newIssue: updatedTasks[taskIndex].issue,
@@ -237,7 +239,7 @@ function ManageProjects() {
                 navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
             }
         } catch (err) {
-            navigate("/", { state: { errorMessage: "Id already exists" } });
+            navigate("/", { state: { errorMessage: "You are not authorized to access this page" } });
         }
     };
 
@@ -259,6 +261,7 @@ function ManageProjects() {
 
         const requestOptions = {
             method: "PUT",
+            credentials: "include",
             body: JSON.stringify({
                 id: index,
                 newIssue: updatedTasks[taskIndex].issue,
@@ -278,7 +281,7 @@ function ManageProjects() {
                 navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
             }
         } catch (err) {
-            navigate("/", { state: { errorMessage: "Id already exists" } });
+            navigate("/", { state: { errorMessage: "You are not authorized to access this page" } });
         }
     }
 
