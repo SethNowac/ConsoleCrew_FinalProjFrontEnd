@@ -2,21 +2,32 @@ import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../style.css";
 
+/**
+ * Component for updating a project.
+ */
 function UpdateProject() {
+   // References to form inputs using the useRef hook
   const title = useRef(null);
   const desc = useRef(null);
   const tag = useRef(null);
 
+  // Hook for programmatic navigation
   const navigate = useNavigate();
 
+  /**
+   * Handles the form submission for updating the project.
+   * @param {Object} event - The form submission event.
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Checking if a project ID is stored in sessionStorage
     if(sessionStorage.getItem("updateProjectId") == null) {
         alert("No project has been selected!");
         return;
     }
 
+     // Constructing the request options for the PUT request
     const requestOptions = {
       method: "PUT",
       credentials: "include",
@@ -32,8 +43,10 @@ function UpdateProject() {
     };
 
     try{
+      // Sending the PUT request to update the project
       const response = await fetch("http://localhost:1339/projects", requestOptions);
       const result = await response.json();
+       // Handling different response statuses
       if (response.status === 400) {
           navigate("/", { state: { errorMessage: result.errorMessage } });
       }else if(response.status === 500){
@@ -48,6 +61,7 @@ function UpdateProject() {
     }
   };
 
+   // Render the component
   return (
     <>
       <div

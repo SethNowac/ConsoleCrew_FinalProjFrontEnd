@@ -4,10 +4,17 @@ import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import "../style.css";
 
+/**
+ * LogoutButton component renders a logout button that allows the user to log out of the application.
+ */
 function LogoutButton() {
     const [isLoggedIn, setIsLoggedIn] = useContext(LoggedInContext);
     const navigate = useNavigate();
 
+    /**
+     * performLogout function sends a logout request to the server and handles the response.
+     * It updates the login status and clears the user ID from local storage upon successful logout.
+     */
     const performLogout = async () => {
         try{
             const requestOptions = {

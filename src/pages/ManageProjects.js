@@ -8,6 +8,10 @@ import { ProjectContext, ProjectProvider } from './ProjectContext';
 import "../style.css";
 import { LoggedInContext } from '../components/App';
 
+/**
+ * manages various states and functions related to managing projects, including handling tasks, notes, sketches, and storyboards. 
+ * @returns 
+ */
 function ManageProjects() {
     const [projectName, setProjectName] = useState('');
     const [projectFormat, setProjectFormat] = useState('');
@@ -166,46 +170,46 @@ function ManageProjects() {
     };
 
     const handleAddNotes = async (event) => {
-  event.preventDefault();
+        event.preventDefault();
 
-  let numOfItems = 0;
+        let numOfItems = 0;
 
-  try {
-    const responseGet = await fetch(`http://localhost:1339/${localStorage.getItem("projectId")}/notes`, { method: "POST" });
-    const resultGet = await responseGet.json();
-    if (responseGet.status === 200) {
-      numOfItems = resultGet.length;
-    }
-  } catch (error) { }
+        try {
+            const responseGet = await fetch(`http://localhost:1339/projectId/notes`, { method: "POST" });
+            const resultGet = await responseGet.json();
+            if (responseGet.status === 200) {
+                numOfItems = resultGet.length;
+            }
+        } catch (error) { }
 
-  const content = document.getElementById("notes").value;
+        const content = document.getElementById("notes").value;
 
-  const requestOptions = {
-    method: "POST",
-    body: JSON.stringify({
-      id: numOfItems,
-      content: content,
-      projectId: parseInt(localStorage.getItem("projectId")),
-    }),
-    headers: {
-      "Content-type": "application/json; charset=utf-8",
-    },
-  };
+        const requestOptions = {
+            method: "POST",
+            body: JSON.stringify({
+                id: numOfItems,
+                content: content,
+                projectId: parseInt(localStorage.getItem("projectId")),
+            }),
+            headers: {
+                "Content-type": "application/json; charset=utf-8",
+            },
+        };
 
-  try {
-    const response = await fetch(`http://localhost:1339/${localStorage.getItem("projectId")}/notes`, requestOptions);
-    const result = await response.json();
-    if (response.status === 400) {
-      navigate("/", { state: { errorMessage: result.errorMessage } });
-    } else if (response.status === 500) {
-      navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
-    } else {
-      // Handle the response or update the UI as needed
-    }
-  } catch (err) {
-    navigate("/", { state: { errorMessage: "Id already exists" } });
-  }
-};
+        try {
+            const response = await fetch(`http://localhost:1339/projectId/notes`, requestOptions);
+            const result = await response.json();
+            if (response.status === 400) {
+                navigate("/", { state: { errorMessage: result.errorMessage } });
+            } else if (response.status === 500) {
+                navigate("/systemerror", { state: { errorMessage: result.errorMessage } });
+            } else {
+                // Handle the response or update the UI as needed
+            }
+        } catch (err) {
+            navigate("/", { state: { errorMessage: "Id already exists" } });
+        }
+    };
 
     const handleAddItems = () => {
         setItems([...item, '']);
@@ -440,7 +444,7 @@ function ManageProjects() {
                                             onChange={(e) => setNotes(e.target.value)}
                                         ></textarea>
                                     </div>
-                                    
+
                                     <ul>
                                         {notesList.map((note) => (
                                             <li key={note.id}>
