@@ -146,7 +146,7 @@ const CreateAccountPage = () => {
         },
       };
       try{
-          const response = await fetch("http://localhost:1339/users/register", requestOptions);
+          const response = await fetch(process.env.REACT_APP_BACKEND + "/users/register", requestOptions);
           const result = await response.json();
           if (response.status === 400) {
               navigate("/", { state: { errorMessage: result.errorMessage } });

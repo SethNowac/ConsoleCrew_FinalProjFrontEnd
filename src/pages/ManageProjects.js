@@ -62,7 +62,7 @@ function ManageProjects() {
         if (selectedFormat === 'tasks') {
             try {
                 /** Call auth, passing cookies to the back-end */
-                const response = await fetch("http://localhost:1339/tasklogs/" + localStorage.getItem("projectId"), { method: "GET", credentials: "include" });
+                const response = await fetch(process.env.REACT_APP_BACKEND + "/tasklogs/" + localStorage.getItem("projectId"), { method: "GET", credentials: "include" });
                 const result = await response.json();
                 if (response.status === 200) {
                     setTasks(result);
@@ -134,7 +134,7 @@ function ManageProjects() {
         let numOfItems = 0;
 
         try {
-            const responseGet = await fetch("http://localhost:1339/tasklogs", { method: "GET", credentials: "include" });
+            const responseGet = await fetch(process.env.REACT_APP_BACKEND + "/tasklogs", { method: "GET", credentials: "include" });
             const resultGet = await responseGet.json();
             if (responseGet.status === 200) {
                 numOfItems = resultGet.length;
@@ -154,7 +154,7 @@ function ManageProjects() {
             },
         };
         try {
-            const response = await fetch("http://localhost:1339/tasklogs", requestOptions);
+            const response = await fetch(process.env.REACT_APP_BACKEND + "/tasklogs", requestOptions);
             const result = await response.json();
             if (response.status === 400) {
                 navigate("/", { state: { errorMessage: result.errorMessage } });
@@ -175,7 +175,7 @@ function ManageProjects() {
         let numOfItems = 0;
 
         try {
-            const responseGet = await fetch(`http://localhost:1339/projectId/notes`, { method: "POST" });
+            const responseGet = await fetch(process.env.REACT_APP_BACKEND + `/projectId/notes`, { method: "POST" });
             const resultGet = await responseGet.json();
             if (responseGet.status === 200) {
                 numOfItems = resultGet.length;
@@ -197,7 +197,7 @@ function ManageProjects() {
         };
 
         try {
-            const response = await fetch(`http://localhost:1339/projectId/notes`, requestOptions);
+            const response = await fetch(process.env.REACT_APP_BACKEND + `/projectId/notes`, requestOptions);
             const result = await response.json();
             if (response.status === 400) {
                 navigate("/", { state: { errorMessage: result.errorMessage } });
@@ -251,7 +251,7 @@ function ManageProjects() {
         let result;
 
         try {
-            const responseGet = await fetch("http://localhost:1339/tasklogs/" + index, { method: "DELETE", credentials: "include" });
+            const responseGet = await fetch(process.env.REACT_APP_BACKEND + "/tasklogs/" + index, { method: "DELETE", credentials: "include" });
             result = responseGet.json();
             if (responseGet.status === 200) {
                 const updatedTasks = [...tasks];
@@ -288,7 +288,7 @@ function ManageProjects() {
             },
         };
         try {
-            const response = await fetch("http://localhost:1339/tasklogs", requestOptions);
+            const response = await fetch(process.env.REACT_APP_BACKEND + "/tasklogs", requestOptions);
             const result = await response.json();
             if (response.status === 400) {
                 navigate("/", { state: { errorMessage: result.errorMessage } });
@@ -321,7 +321,7 @@ function ManageProjects() {
             },
         };
         try {
-            const response = await fetch("http://localhost:1339/tasklogs", requestOptions);
+            const response = await fetch(process.env.REACT_APP_BACKEND + "/tasklogs", requestOptions);
             const result = await response.json();
             if (response.status === 400) {
                 navigate("/", { state: { errorMessage: result.errorMessage } });

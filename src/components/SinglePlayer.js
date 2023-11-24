@@ -11,7 +11,7 @@ function SinglePlayer({ setDisplay }) {
   const [player, setPlayer] = useState({});
 
   async function callGetPlayer() {
-    const response = await fetch("http://localhost:1338/players/kev", {
+    const response = await fetch(process.env.REACT_APP_BACKEND + "/players/kev", {
       method: "GET",
     });
     const result = await response.json();

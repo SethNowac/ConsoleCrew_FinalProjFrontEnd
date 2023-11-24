@@ -24,7 +24,7 @@ function CreateProject() {
 
     try {
       // Fetch the existing projects to determine the number of items
-        const responseGet = await fetch("http://localhost:1339/projects", { method: "GET" });
+        const responseGet = await fetch(process.env.REACT_APP_BACKEND + "/projects", { method: "GET" });
         const resultGet = await responseGet.json();
         if (responseGet.status === 200) {
             numOfItems = resultGet.length;
@@ -49,7 +49,7 @@ function CreateProject() {
 
     try{
        // Send the POST request to create a new project
-      const response = await fetch("http://localhost:1339/projects", requestOptions);
+      const response = await fetch(process.env.REACT_APP_BACKEND + "/projects", requestOptions);
       const result = await response.json();
       if (response.status === 400) {
           navigate("/", { state: { errorMessage: result.errorMessage } });

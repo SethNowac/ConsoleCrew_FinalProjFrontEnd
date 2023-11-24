@@ -9,7 +9,7 @@ function AllPlayers(){
     const [players, setPlayers ] = useState([]);
 
     const callGetAllPlayers = async () => {
-        const response = await fetch("http://localhost:1338/players", { method : "GET" });
+        const response = await fetch(process.env.REACT_APP_BACKEND + "/players", { method : "GET" });
         const result = await response.json();
         setPlayers(result);
     };

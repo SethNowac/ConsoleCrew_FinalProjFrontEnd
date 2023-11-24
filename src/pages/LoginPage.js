@@ -65,7 +65,7 @@ const LoginPage = () => {
       },
     };
     try {
-      const response = await fetch("http://localhost:1339/session/login", requestOptions);
+      const response = await fetch(process.env.REACT_APP_BACKEND + "/session/login", requestOptions);
       if (response.status === 200) {
         // Assuming the validation is successful
         console.log(`Email: ${email} Password: ${password}`);

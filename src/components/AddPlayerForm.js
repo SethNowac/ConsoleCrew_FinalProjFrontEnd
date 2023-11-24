@@ -30,7 +30,7 @@ function AddPlayerForm(props) {
             },
         };
         try{
-            const response = await fetch("http://localhost:1338/players", requestOptions);
+            const response = await fetch(process.env.REACT_APP_BACKEND + "/players", requestOptions);
             const result = await response.json();
             if (response.status === 400) {
                 navigate("/", { state: { errorMessage: result.errorMessage } });

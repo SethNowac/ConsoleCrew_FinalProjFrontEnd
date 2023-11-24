@@ -28,7 +28,7 @@ function ListProject({ projects }){
         
         let result;
         try {
-            const responseGet = await fetch("http://localhost:1339/projects/"+event.target.id, { method: "DELETE", credentials: "include" });
+            const responseGet = await fetch(process.env.REACT_APP_BACKEND + "/projects/"+event.target.id, { method: "DELETE", credentials: "include" });
             result = responseGet.json();
             if (responseGet.status === 200) {
                 console.log("Deleting a project was successful");

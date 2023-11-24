@@ -44,7 +44,7 @@ function UpdateProject() {
 
     try{
       // Sending the PUT request to update the project
-      const response = await fetch("http://localhost:1339/projects", requestOptions);
+      const response = await fetch(process.env.REACT_APP_BACKEND + "/projects", requestOptions);
       const result = await response.json();
        // Handling different response statuses
       if (response.status === 400) {
